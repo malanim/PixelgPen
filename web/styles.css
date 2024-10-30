@@ -1,0 +1,250 @@
+/* Светлая тема */
+.light-theme {
+    --primary-bg: #ffffff;
+    --secondary-bg: #f0f0f0;
+    --primary-text: #000000;
+    --secondary-text: #333333;
+    --accent-color: #4a90e2;
+    --button-bg: #4a90e2;
+    --button-text: #ffffff;
+    --button-hover: #3a7bc8;
+    --input-border: #cccccc;
+}
+
+/* Темная тема */
+.dark-theme {
+    --primary-bg: #333333;
+    --secondary-bg: #555555;
+    --primary-text: #ffffff;
+    --secondary-text: #cccccc;
+    --accent-color: #61dafb;
+    --button-bg: #61dafb;
+    --button-text: #000000;
+    --button-hover: #4fa8c5;
+    --input-border: #777777;
+}
+
+/* Теплая тема */
+.warm-theme {
+    --primary-bg: #fff5eb;
+    --secondary-bg: #ffe4c4;
+    --primary-text: #8b4513;
+    --secondary-text: #d2691e;
+    --accent-color: #ff7f50;
+    --button-bg: #ff7f50;
+    --button-text: #ffffff;
+    --button-hover: #e86a3e;
+    --input-border: #d2691e;
+}
+
+/* Холодная тема */
+.cold-theme {
+    --primary-bg: #e6f3ff;
+    --secondary-bg: #b0e0e6;
+    --primary-text: #00008b;
+    --secondary-text: #4682b4;
+    --accent-color: #1e90ff;
+    --button-bg: #1e90ff;
+    --button-text: #ffffff;
+    --button-hover: #0066cc;
+    --input-border: #4682b4;
+}
+
+/* Живая тема */
+.vivid-theme {
+    --primary-bg: #e8f5e9;
+    --secondary-bg: #a5d6a7;
+    --primary-text: #1b5e20;
+    --secondary-text: #2e7d32;
+    --accent-color: #4caf50;
+    --button-bg: #4caf50;
+    --button-text: #ffffff;
+    --button-hover: #45a049;
+    --input-border: #2e7d32;
+}
+
+/* Применение переменных к элементам */
+body {
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.main-container {
+    display: flex;
+    height: 100vh;
+}
+
+.menu-sidebar {
+    width: 200px;
+    background-color: var(--secondary-bg);
+    padding: 20px;
+}
+
+.content-area {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.menu-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.menu-button:hover {
+    background-color: var(--button-hover);
+}
+
+.menu-button.active {
+    background-color: var(--accent-color);
+    color: var(--button-text);
+}
+
+.content-block {
+    display: none;
+}
+
+.content-block.active {
+    display: block;
+}
+
+.box {
+    background-color: var(--secondary-bg);
+    color: var(--secondary-text);
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.title-box {
+    background-color: var(--accent-color);
+    color: var(--button-text);
+    padding: 10px 20px;
+}
+
+.title-box h1 {
+    margin: 0;
+}
+
+.box-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.left-box, .right-box {
+    width: 48%;
+}
+
+button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: var(--button-hover);
+}
+
+/* Общие стили для текстовых полей и textarea */
+textarea, input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+    font-family: Arial, sans-serif;
+}
+
+/* Отдельные стили для input[type="number"] и select */
+input[type="number"], select {
+    width: 100px;  /* Фиксированная ширина */
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+    font-family: Arial, sans-serif;
+}
+
+textarea {
+    height: 200px;
+    resize: vertical;
+}
+
+/* Стили для блока настроек */
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.settings-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#settings label {
+    display: inline-block;
+    width: 80px;
+    margin-right: 10px;
+    font-weight: bold;
+    color: var(--secondary-text);
+}
+
+#settings input[type="number"] {
+    width: 100px;
+}
+
+#settings select[type="text-select"] {
+    width: 100px;
+}
+
+#settings button {
+    margin-top: 20px;
+}
+
+/* Дополнительные стили для улучшения читаемости */
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--input-border);
+    margin: 20px 0;
+}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Program Demo</title>
+    <script type="text/javascript" src="/eel.js"></script>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- Левое меню -->
+        <div class="menu-sidebar box">
+            <h2>Menu</h2>
+            <button class="menu-button active" onclick="showBlock('async-tasks')">Async Tasks</button>
+            <button class="menu-button" onclick="showBlock('block2')">Block 2</button>
+            <button class="menu-button" onclick="showBlock('settings')">Settings</button>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="content-area">
+            <!-- Блок асинхронных задач -->
+            <div id="async-tasks" class="content-block active">
+                <div class="box title-box">
+                    <h1>Async Tasks Demo</h1>
+                </div>
+                <div class="box-container">
+                    <div class="box left-box">
+                        <h2>Tasks</h2>
+                        <button onclick="startTask(1)">Start Task 1</button>
+                        <button onclick="startTask(2)">Start Task 2</button>
+                        <button onclick="startTask(3)">Start Task 3</button>
+                    </div>
+                    <div class="box right-box">
+                        <h2>Results</h2>
+                        <textarea id="results" readonly></textarea>
+                        <button onclick="clearResults()">Clear Results</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Блок 2 (пример) -->
+            <div id="block2" class="content-block">
+                <div class="box title-box">
+                    <h1>Block 2</h1>
+                </div>
+                <div class="box">
+                    <h2>Content Coming Soon</h2>
+                    <p>This is a placeholder for Block 2 content.</p>
+                </div>
+            </div>
+
+            <!-- Блок 3 - Настройки -->
+            <div id="settings" class="content-block">
+                <div class="box title-box">
+                    <h1>Настройки</h1>
+                </div>
+                <div class="box">
+                    <div class="settings-container">
+                        <div class="settings-group">
+                            <h2>Размер окна</h2>
+                            <div class="settings-row">
+                                <label for="width">Ширина:</label>
+                                <input type="number" id="width" value="1600">
+                            </div>
+                            <div class="settings-row">
+                                <label for="height">Высота:</label>
+                                <input type="number" id="height" value="920">
+                            </div>
+                            <h2>Вид</h2>
+                            <div class="setting-row">
+                                <label for="browser">Браузер:</label>
+                                <select type="text-select" id="browser" name="browser" onchange="onBrowserChange()">
+                                    <option value="chrome">Chrome</option>
+                                    <option value="edge">Edge</option>
+                                    <option value="firefox">Firefox</option>
+                                    <option value="opera">Opera</option>
+                                </select>
+                            </div>
+                            <h2>Цветовая палитра</h2>
+                            <div class="settings-row">
+                                <label for="theme">Тема:</label>
+                                <select type="text-select" id="theme" name="theme" onchange="onThemeChange()">
+                                    <option value="light">Светлая</option>
+                                    <option value="dark">Темная</option>
+                                    <option value="warm">Теплая</option>
+                                    <option value="cold">Холодная</option>
+                                    <option value="vivid">Живая</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button onclick="saveSettings()">Сохранить настройки</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
