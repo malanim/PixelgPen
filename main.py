@@ -26,12 +26,27 @@ def resource_path(relative_path):
 # Инициализация Eel
 eel.init('web')
 
+def show_notification(message, type='info', duration=6000):
+    """
+    Показывает уведомление через JavaScript интерфейс
+    :param message: текст уведомления
+    :param type: тип уведомления ('info', 'success', 'error')
+    :param duration: продолжительность показа в миллисекундах
+    """
+    eel.showAlert(message, type, duration)()
+
 @eel.expose
 def long_running_task(task_id):
     def run_task():
+
         print(f"Starting task {task_id}")
+        show_notification(f"Задача {task_id} запущена", "info", 2000)
+        
         time.sleep(3)
+        
         print(f"Finished task {task_id}")
+        show_notification(f"Задача {task_id} завершена", "success", 2000)
+
         # Отправляем результат обратно в JavaScript
         eel.updateResult(f"Task {task_id} completed!")()
     

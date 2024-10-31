@@ -9,6 +9,9 @@
     --button-text: #ffffff;
     --button-hover: #3a7bc8;
     --input-border: #cccccc;
+    --notification-bg: #ffffff;
+    --notification-text: #333333;
+    --notification-border: #e0e0e0;
 }
 
 /* Темная тема */
@@ -22,6 +25,9 @@
     --button-text: #000000;
     --button-hover: #4fa8c5;
     --input-border: #777777;
+    --notification-bg: #424242;
+    --notification-text: #ffffff;
+    --notification-border: #616161;
 }
 
 /* Теплая тема */
@@ -35,6 +41,9 @@
     --button-text: #ffffff;
     --button-hover: #e86a3e;
     --input-border: #d2691e;
+    --notification-bg: #fff5eb;
+    --notification-text: #8b4513;
+    --notification-border: #ffe4c4;
 }
 
 /* Холодная тема */
@@ -48,6 +57,9 @@
     --button-text: #ffffff;
     --button-hover: #0066cc;
     --input-border: #4682b4;
+    --notification-bg: #e6f3ff;
+    --notification-text: #00008b;
+    --notification-border: #b0e0e6;
 }
 
 /* Живая тема */
@@ -61,6 +73,9 @@
     --button-text: #ffffff;
     --button-hover: #45a049;
     --input-border: #2e7d32;
+    --notification-bg: #e8f5e9;
+    --notification-text: #1b5e20;
+    --notification-border: #a5d6a7;
 }
 
 /* Применение переменных к элементам */
@@ -247,4 +262,122 @@ hr {
     border: none;
     border-top: 1px solid var(--input-border);
     margin: 20px 0;
+}
+
+#notifications-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    pointer-events: none; /* Позволяет кликать сквозь контейнер */
+    width: 300px; /* Фиксированная ширина контейнера */
+}
+
+.notification-wrapper {
+    position: absolute;
+    right: 0;
+    width: 100%;
+    transition: all 0.3s ease-out;
+    pointer-events: auto;
+}
+
+.notification {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: var(--notification-bg);
+    color: var(--notification-text);
+    border: 1px solid var(--notification-border);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    word-wrap: break-word;
+    max-width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.notification-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.success-indicator {
+    background-color: #4caf50;
+}
+
+.error-indicator {
+    background-color: #f44336;
+}
+
+.info-indicator {
+    background-color: #ffd700;
+}
+
+.notification-text {
+    flex-grow: 1;
+}
+
+.notification-close {
+    cursor: pointer;
+    padding: 0 5px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.notification-close:hover {
+    opacity: 1;
+}
+
+/* .notification.info {
+    background-color: var(--notification-info-bg);
+    border-color: var(--notification-info-border);
+}
+
+.notification.success {
+    background-color: var(--notification-success-bg);
+    border-color: var(--notification-success-border);
+}
+
+.notification.error {
+    background-color: var(--notification-error-bg);
+    border-color: var(--notification-error-border);
+} */
+
+.notification-close {
+    cursor: pointer;
+    padding: 0 5px;
+    align-self: flex-start;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
 }

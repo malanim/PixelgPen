@@ -102,11 +102,11 @@ async function saveSettings() {
             }
         }
         
-        alert(message);
+        showAlert(message, 'success');
         loadSettings(); // Перезагружаем настройки, чтобы обновить состояние полей ввода
     } catch (error) {
         console.error('Ошибка при сохранении настроек:', error);
-        alert('Произошла ошибка при сохранении настроек.');
+        showAlert('Произошла ошибка при сохранении настроек.', 'error');
     }
 }
 
@@ -120,6 +120,9 @@ function onThemeChange() {
 eel.expose(applyTheme);
 function applyTheme(theme) {
     document.body.className = theme + '-theme';
+    if (window.notificationManager) {
+        window.notificationManager.setTheme(theme); // Устанавливаем тему для уведомлений
+    }
 }
 
 // Функция для загрузки настроек
@@ -153,3 +156,141 @@ document.addEventListener('DOMContentLoaded', function() {
         loadSettings();
     }
 });
+
+class NotificationManager {
+    constructor() {
+        this.container = document.getElementById('notifications-container');
+        this.notifications = [];
+        this.maxNotifications = 5;
+        this.currentTheme = 'default';
+    }
+
+    setTheme(theme) {
+        this.currentTheme = theme;
+        this.notifications.forEach(notification => {
+            this.updateNotificationTheme(notification);
+        });
+    }
+
+    updateNotificationTheme(notification) {
+        notification.classList.remove('light-theme', 'dark-theme', 'warm-theme', 'cold-theme', 'vivid-theme');
+        notification.classList.add(`${this.currentTheme}-theme`);
+    }
+
+    show(message, type = 'info', duration = 6000) {
+        if (!this.container) {
+            console.error('Notifications container not found!');
+            return;
+        }
+    
+        const wrapper = document.createElement('div');
+        wrapper.className = 'notification-wrapper';
+        wrapper.style.top = '0';
+        
+        const notification = document.createElement('div');
+        notification.className = `notification ${type} ${this.currentTheme}-theme`;
+        
+        const content = document.createElement('div');
+        content.className = 'notification-content';
+        
+        // Создаем точку-индикатор
+        const indicator = document.createElement('span');
+        indicator.className = `notification-indicator ${type}-indicator`;
+        
+        // Создаем элемент для текста
+        const textSpan = document.createElement('span');
+        textSpan.className = 'notification-text';
+        textSpan.textContent = message;
+        
+        content.appendChild(indicator);
+        content.appendChild(textSpan);
+        
+        const closeButton = document.createElement('span');
+        closeButton.className = 'notification-close';
+        closeButton.innerHTML = '✕';
+        closeButton.onclick = () => this.remove(wrapper);
+        
+        notification.appendChild(content);
+        notification.appendChild(closeButton);
+        wrapper.appendChild(notification);
+        
+        this.container.appendChild(wrapper);
+        this.notifications.push(wrapper);
+    
+        // Ограничение количества уведомлений
+        if (this.notifications.length > this.maxNotifications) {
+            this.remove(this.notifications[0]);
+        }
+    
+        // Обновляем позиции всех уведомлений
+        this.updatePositions();
+    
+        // Анимация появления
+        wrapper.style.transform = 'translateX(100%)';
+        requestAnimationFrame(() => {
+            wrapper.style.transform = 'translateX(0)';
+        });
+    
+        // Автоматическое удаление
+        if (duration > 0) {
+            setTimeout(() => {
+                if (this.notifications.includes(wrapper)) {
+                    this.remove(wrapper);
+                }
+            }, duration);
+        }
+    }
+
+    remove(wrapper) {
+        const index = this.notifications.indexOf(wrapper);
+        if (index > -1) {
+            this.notifications.splice(index, 1);
+            wrapper.style.transform = 'translateX(100%)';
+            wrapper.style.opacity = '0';
+
+            setTimeout(() => {
+                wrapper.remove();
+                this.updatePositions();
+            }, 300);
+        }
+    }
+
+    updatePositions() {
+        let currentOffset = 0;
+        this.notifications.forEach((wrapper) => {
+            // Сначала устанавливаем позицию в начальную точку
+            wrapper.style.top = currentOffset + 'px';
+            
+            // Получаем реальную высоту элемента, включая margin
+            const rect = wrapper.getBoundingClientRect();
+            const height = rect.height;
+            
+            // Увеличиваем смещение на высоту текущего уведомления плюс отступ
+            currentOffset += height + 10; // 10px - отступ между уведомлениями
+        });
+    }
+}
+
+// Создаем глобальный экземпляр менеджера уведомлений
+document.addEventListener('DOMContentLoaded', function() {
+    window.notificationManager = new NotificationManager();
+});
+
+// Функция для применения темы
+eel.expose(applyTheme);
+function applyTheme(theme) {
+    document.body.className = theme + '-theme';
+    if (window.notificationManager) {
+        window.notificationManager.setTheme(theme);
+    }
+}
+
+// Заменяем стандартный alert на кастомный
+eel.expose(showAlert);
+function showAlert(message, type = 'info', duration = 5000) {
+    if (window.notificationManager) {
+        window.notificationManager.show(message, type, duration);
+    } else {
+        console.error('NotificationManager not initialized');
+    }
+}

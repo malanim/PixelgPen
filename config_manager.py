@@ -14,8 +14,8 @@ class ConfigManager:
 
     def create_default_config(self):
         self.config['Window'] = {
-            'width': '800',
-            'height': '600',
+            'width': '1600',
+            'height': '920',
             'browser': 'chrome'
         }
         self.config['Appearance'] = {
