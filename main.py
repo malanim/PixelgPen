@@ -86,6 +86,10 @@ def set_theme(theme):
     config.set_theme(theme)
     return True
 
+@eel.expose
+def get_app_version():
+    return config.get_version()
+
 # Передаем текущие настройки в JavaScript
 @eel.expose
 def get_current_settings():
@@ -93,10 +97,11 @@ def get_current_settings():
         width, height = config.get_window_size()
         browser = config.get_browser()
         theme = config.get_theme()
-        return width, height, browser, theme
+        version = config.get_version()
+        return width, height, browser, theme, version
     except Exception as e:
         print(f"Error getting settings: {e}")
-        return 1600, 920, 'chrome', 'light'  # значения по умолчанию
+        return 1600, 920, 'chrome', 'light', '0.0.0-dev'  # значения по умолчанию
 
 @eel.expose
 def set_browser(browser):
@@ -112,6 +117,8 @@ def set_last_active_block(block_id):
 
 # Запуск веб-приложения
 if __name__ == '__main__':
+    config.update_app_version()
+
     # Получаем размеры окна из конфигурации
     window_width, window_height = config.get_window_size()
     browser = config.get_browser()

@@ -7,7 +7,7 @@ import os
 import configparser
 import appdirs # Требуется установка: pip install appdirs
 
-
+from version import VersionInfo
 
 class ConfigManager:
     def __init__(self):
@@ -15,11 +15,12 @@ class ConfigManager:
         Инициализирует объект ConfigManager.
         Загружает существующий конфигурационный файл или создает новый с настройками по умолчанию.
         """
+        self.version_info = VersionInfo()
         self.config = configparser.ConfigParser()
         
         # Получаем путь к директории для пользовательских данных
         app_name = "PixelgPen"  # Имя вашего приложения
-        app_author = "YourCompany"  # Имя вашей компании
+        app_author = "Malanim Software"  # Имя вашей компании
         
         # Получаем директорию для конфигурационных файлов
         config_dir = appdirs.user_config_dir(app_name, app_author)
@@ -152,3 +153,16 @@ class ConfigManager:
             self.config['UI'] = {}
         self.config['UI']['last_active_block'] = block_id
         self.save_config()
+    
+    def get_version(self):
+        """
+        Возвращает текущую версию приложения.
+        """
+        return self.version_info.get_version_string()
+    
+    def update_app_version(self):
+        """
+        Устанавливает новую версию.
+        """
+        if not getattr(sys, 'frozen', False):
+            self.version_info.update_version()

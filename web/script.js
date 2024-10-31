@@ -135,11 +135,12 @@ function applyTheme(theme) {
 
 // Функция для загрузки настроек
 async function loadSettings() {
-    const [width, height, browser, theme] = await eel.get_current_settings()();
+    const [width, height, browser, theme, version] = await eel.get_current_settings()();
     document.getElementById('width').value = width;
     document.getElementById('height').value = height;
     document.getElementById('browser').value = browser;
     document.getElementById('theme').value = theme;
+    document.getElementById('app-version').textContent = version;
     
     // Применяем тему
     applyTheme(theme);
