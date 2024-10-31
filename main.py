@@ -1,16 +1,20 @@
 import sys
-import os
 
 # Предотвращение создания файлов кэша
 sys.dont_write_bytecode = True
 
+import os
 import eel # Эта библиотека требует установки: pip install eel
 import threading
 import time
 from config_manager import ConfigManager
 
 # Создаем экземпляр менеджера конфигурации
-config = ConfigManager()
+try:
+    config = ConfigManager()
+except Exception as e:
+    print(f"Error initializing ConfigManager: {e}")
+    sys.exit(1)
 
 # Функция для получения корректного пути к ресурсам
 def resource_path(relative_path):
@@ -43,7 +47,7 @@ def long_running_task(task_id):
         show_notification(f"Задача {task_id} запущена", "info", 2000)
         
         time.sleep(3)
-        
+
         print(f"Finished task {task_id}")
         show_notification(f"Задача {task_id} завершена", "success", 2000)
 
@@ -85,14 +89,26 @@ def set_theme(theme):
 # Передаем текущие настройки в JavaScript
 @eel.expose
 def get_current_settings():
-    width, height = config.get_window_size()
-    browser = config.get_browser()
-    theme = config.get_theme()
-    return width, height, browser, theme
+    try:
+        width, height = config.get_window_size()
+        browser = config.get_browser()
+        theme = config.get_theme()
+        return width, height, browser, theme
+    except Exception as e:
+        print(f"Error getting settings: {e}")
+        return 1600, 920, 'chrome', 'light'  # значения по умолчанию
 
 @eel.expose
 def set_browser(browser):
     return config.set_browser(browser)
+
+@eel.expose
+def get_last_active_block():
+    return config.get_last_active_block()
+
+@eel.expose
+def set_last_active_block(block_id):
+    config.set_last_active_block(block_id)
 
 # Запуск веб-приложения
 if __name__ == '__main__':

@@ -14,15 +14,26 @@
         <!-- Левое меню -->
         <div class="menu-sidebar box">
             <h2>Menu</h2>
-            <button class="menu-button active" onclick="showBlock('async-tasks')">Async Tasks</button>
-            <button class="menu-button" onclick="showBlock('block2')">Block 2</button>
+            <button class="menu-button" onclick="showBlock('block1')">Block 1</button>
+            <button class="menu-button" onclick="showBlock('async-tasks')">Async Tasks</button>
             <button class="menu-button" onclick="showBlock('settings')">Settings</button>
         </div>
 
         <!-- Основной контент -->
         <div class="content-area">
+            <!-- Блок 1 -->
+            <div id="block1" class="content-block">
+                <div class="box title-box">
+                    <h1>Block 1</h1>
+                </div>
+                <div class="box">
+                    <h2>Content Coming Soon</h2>
+                    <p>This is a placeholder for Block 1 content.</p>
+                </div>
+            </div>
+
             <!-- Блок асинхронных задач -->
-            <div id="async-tasks" class="content-block active">
+            <div id="async-tasks" class="content-block">
                 <div class="box title-box">
                     <h1>Async Tasks Demo</h1>
                 </div>
@@ -38,17 +49,6 @@
                         <textarea id="results" readonly></textarea>
                         <button onclick="clearResults()">Clear Results</button>
                     </div>
-                </div>
-            </div>
-
-            <!-- Блок 2 (пример) -->
-            <div id="block2" class="content-block">
-                <div class="box title-box">
-                    <h1>Block 2</h1>
-                </div>
-                <div class="box">
-                    <h2>Content Coming Soon</h2>
-                    <p>This is a placeholder for Block 2 content.</p>
                 </div>
             </div>
 

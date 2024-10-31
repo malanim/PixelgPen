@@ -1,5 +1,13 @@
-import configparser
+import sys
+
+# Предотвращение создания файлов кэша
+sys.dont_write_bytecode = True
+
 import os
+import configparser
+import appdirs # Требуется установка: pip install appdirs
+
+
 
 class ConfigManager:
     def __init__(self):
@@ -8,13 +16,29 @@ class ConfigManager:
         Загружает существующий конфигурационный файл или создает новый с настройками по умолчанию.
         """
         self.config = configparser.ConfigParser()
-        self.config_file = 'settings.ini'
+        
+        # Получаем путь к директории для пользовательских данных
+        app_name = "PixelgPen"  # Имя вашего приложения
+        app_author = "YourCompany"  # Имя вашей компании
+        
+        # Получаем директорию для конфигурационных файлов
+        config_dir = appdirs.user_config_dir(app_name, app_author)
+        
+        # Создаем директорию, если она не существует
+        os.makedirs(config_dir, exist_ok=True)
+        
+        # Полный путь к файлу конфигурации
+        self.config_file = os.path.join(config_dir, 'settings.ini')
         
         # Создаем конфиг файл с настройками по умолчанию, если он не существует
         if not os.path.exists(self.config_file):
             self.create_default_config()
         else:
-            self.config.read(self.config_file)
+            try:
+                self.config.read(self.config_file)
+            except Exception as e:
+                print(f"Error reading config file: {e}")
+                self.create_default_config()
 
     def create_default_config(self):
         """
@@ -29,7 +53,20 @@ class ConfigManager:
         self.config['Appearance'] = {
             'theme': 'light'
         }
+        self.config['UI'] = {
+            'last_active_block': 'block1'
+        }
         self.save_config()
+
+    def save_config(self):
+        """
+        Сохраняет текущие настройки в конфигурационный файл.
+        """
+        try:
+            with open(self.config_file, 'w', encoding='utf-8') as configfile:
+                self.config.write(configfile)
+        except Exception as e:
+            print(f"Error saving config file: {e}")
 
     def get_theme(self):
         """
@@ -73,13 +110,6 @@ class ConfigManager:
         self.save_config()
         return True
 
-    def save_config(self):
-        """
-        Сохраняет текущие настройки в конфигурационный файл.
-        """
-        with open(self.config_file, 'w') as configfile:
-            self.config.write(configfile)
-
     def get_window_size(self):
         """
         Возвращает текущий размер окна приложения.
@@ -104,3 +134,21 @@ class ConfigManager:
         self.config['Window']['height'] = str(height)
         self.save_config()
         return True
+    
+    def get_last_active_block(self):
+        """
+        Возвращает ID последнего активного блока.
+        """
+        try:
+            return self.config.get('UI', 'last_active_block')
+        except (configparser.Error, KeyError):
+            return 'block1'  # По умолчанию возвращаем первый блок
+
+    def set_last_active_block(self, block_id):
+        """
+        Сохраняет ID последнего активного блока.
+        """
+        if 'UI' not in self.config:
+            self.config['UI'] = {}
+        self.config['UI']['last_active_block'] = block_id
+        self.save_config()

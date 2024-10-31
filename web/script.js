@@ -53,6 +53,14 @@ function showBlock(blockId) {
     if (blockId === 'settings') {
         loadSettings();
     }
+
+    // Сохраняем последний активный блок
+    eel.set_last_active_block(blockId);
+}
+
+async function loadLastActiveBlock() {
+    const lastActiveBlock = await eel.get_last_active_block()();
+    showBlock(lastActiveBlock);
 }
 
 // Функция для изменения размера окна
@@ -152,9 +160,7 @@ function onBrowserChange() {
 
 // Загружаем настройки при загрузке страницы, если открыт блок настроек
 document.addEventListener('DOMContentLoaded', function() {
-    if (document.getElementById('settings').classList.contains('active')) {
-        loadSettings();
-    }
+    loadLastActiveBlock();
 });
 
 class NotificationManager {
