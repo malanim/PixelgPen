@@ -115,7 +115,31 @@ def get_last_active_block():
 def set_last_active_block(block_id):
     config.set_last_active_block(block_id)
 
-# Запуск веб-приложения
+@eel.expose
+def delete_configuration():
+    result = config.delete_config()
+    if result:
+        show_notification("Конфигурация успешно удалена. Приложение будет закрыто.", "success", 5000)
+        # Добавляем небольшую задержку, чтобы уведомление успело отобразиться
+        time.sleep(6)
+        close_application()
+        return True
+    else:
+        show_notification("Не удалось удалить конфигурацию.", "error", 5000)
+        return False
+
+@eel.expose
+def close_application():
+    """
+    Закрывает приложение
+    """
+    try:
+        sys.exit(0)
+    except Exception as e:
+        print(f"Error closing application: {e}")
+        return False
+
+# Обработка запуска и закрытия веб-приложения
 if __name__ == '__main__':
     config.update_app_version()
 
@@ -126,15 +150,27 @@ if __name__ == '__main__':
     # Путь к файлу иконки относительно exe файла
     icon_path = resource_path(os.path.join('assets', 'favicon.ico'))
     
-    # Запускаем приложение с заданными размерами окна и иконкой
-    eel.start('main.html', 
-            mode=browser,
-            size=(window_width, window_height),
-            icon_path=icon_path,
-            block=False)
-    
-    # Применяем тему при запуске
-    eel.applyTheme(config.get_theme())()
-    
-    while True:
-        eel.sleep(1.0)
+    try:
+        # Запускаем приложение с заданными размерами окна и иконкой
+        eel.start('main.html', 
+                mode=browser,
+                size=(window_width, window_height),
+                icon_path=icon_path,
+                block=False)
+        
+        # Применяем тему при запуске
+        eel.applyTheme(config.get_theme())()
+        
+        # Основной цикл приложения
+        while True:
+            try:
+                eel.sleep(1.0)
+            except (SystemExit, KeyboardInterrupt):
+                # Корректное завершение при закрытии окна или прерывании
+                break
+    except Exception as e:
+        print(f"Application error: {e}")
+    finally:
+        # Выполняем необходимые действия перед закрытием
+        print("Closing application...")
+        sys.exit(0)

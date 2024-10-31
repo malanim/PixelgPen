@@ -321,6 +321,8 @@ function applyTheme(theme) {
     if (window.notificationManager) {
         window.notificationManager.setTheme(theme);
     }
+    // Добавляем класс темы к диалогу подтверждения
+    document.getElementById('confirm-overlay').className = `confirm-overlay ${theme}-theme`;
 }
 
 // Заменяем стандартный alert на кастомный
@@ -331,4 +333,72 @@ function showAlert(message, type = 'info', duration = 5000) {
     } else {
         console.error('NotificationManager not initialized');
     }
+}
+
+// Обновляем функцию deleteConfiguration
+async function deleteConfiguration() {
+    const confirmed = await showConfirm("Вы уверены, что хотите удалить конфигурацию? Это действие нельзя отменить.");
+    if (confirmed) {
+        try {
+            const result = await eel.delete_configuration()();
+            if (result) {
+                console.log("Конфигурация успешно удалена");
+            }
+        } catch (error) {
+            console.error('Ошибка при удалении конфигурации:', error);
+            showAlert('Произошла ошибка при удалении конфигурации.', 'error');
+        }
+    }
+}
+
+class ConfirmDialog {
+    constructor() {
+        this.overlay = document.getElementById('confirm-overlay');
+        this.messageElement = document.getElementById('confirm-message');
+        this.yesButton = document.getElementById('confirm-yes');
+        this.noButton = document.getElementById('confirm-no');
+    }
+
+    show(message) {
+        return new Promise((resolve) => {
+            this.messageElement.textContent = message;
+            this.overlay.style.display = 'flex';
+
+            const handleYes = () => {
+                this.hide();
+                resolve(true);
+            };
+
+            const handleNo = () => {
+                this.hide();
+                resolve(false);
+            };
+
+            // Удаляем предыдущие обработчики событий
+            this.yesButton.removeEventListener('click', handleYes);
+            this.noButton.removeEventListener('click', handleNo);
+
+            // Добавляем новые обработчики событий
+            this.yesButton.addEventListener('click', handleYes);
+            this.noButton.addEventListener('click', handleNo);
+        });
+    }
+
+    hide() {
+        this.overlay.style.display = 'none';
+    }
+}
+
+// Создаем глобальный экземпляр диалога подтверждения
+let confirmDialog;
+document.addEventListener('DOMContentLoaded', function() {
+    confirmDialog = new ConfirmDialog();
+});
+
+// Функция для показа диалога подтверждения
+async function showConfirm(message) {
+    if (!confirmDialog) {
+        confirmDialog = new ConfirmDialog();
+    }
+    return await confirmDialog.show(message);
 }

@@ -93,7 +93,20 @@
                             </div>
                         </div>
                         <button onclick="saveSettings()">Сохранить настройки</button>
+                        <h3>Управление конфигурацией</h3>
+                        <button onclick="deleteConfiguration()">Удалить конфигурацию</button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="confirm-overlay" class="confirm-overlay">
+        <div class="confirm-dialog">
+            <div class="confirm-content">
+                <p id="confirm-message"></p>
+                <div class="confirm-buttons">
+                    <button id="confirm-yes" class="confirm-button">Да</button>
+                    <button id="confirm-no" class="confirm-button">Нет</button>
                 </div>
             </div>
         </div>

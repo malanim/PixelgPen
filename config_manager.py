@@ -166,3 +166,17 @@ class ConfigManager:
         """
         if not getattr(sys, 'frozen', False):
             self.version_info.update_version()
+    
+    def delete_config(self):
+        """
+        Удаляет файл конфигурации.
+        """
+        try:
+            if os.path.exists(self.config_file):
+                os.remove(self.config_file)
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(f"Error deleting config file: {e}")
+            return False
