@@ -6,8 +6,6 @@ sys.dont_write_bytecode = True
 
 # Импорт основных библиотек
 import os
-import datetime
-import platform
 
 class VersionInfo:
     def __init__(self):
