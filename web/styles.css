@@ -297,6 +297,12 @@ hr {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.notification:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
 .notification-content {
     display: flex;
     align-items: center;

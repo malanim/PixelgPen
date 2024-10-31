@@ -221,6 +221,31 @@ class NotificationManager {
         notification.appendChild(closeButton);
         wrapper.appendChild(notification);
         
+        // Добавляем свойство для хранения таймера
+        wrapper.timeoutId = null;
+        
+        // Добавляем обработчики событий мыши
+        wrapper.addEventListener('mouseenter', () => {
+            // Очищаем таймер при наведении
+            if (wrapper.timeoutId) {
+                clearTimeout(wrapper.timeoutId);
+                wrapper.timeoutId = null;
+            }
+            notification.classList.add('hovered');
+        });
+        
+        wrapper.addEventListener('mouseleave', () => {
+            notification.classList.remove('hovered');
+            // Запускаем новый таймер при уходе курсора
+            if (duration > 0) {
+                wrapper.timeoutId = setTimeout(() => {
+                    if (this.notifications.includes(wrapper)) {
+                        this.remove(wrapper);
+                    }
+                }, duration);
+            }
+        });
+
         this.container.appendChild(wrapper);
         this.notifications.push(wrapper);
     
@@ -238,9 +263,9 @@ class NotificationManager {
             wrapper.style.transform = 'translateX(0)';
         });
     
-        // Автоматическое удаление
+        // Автоматическое удаление (начальный таймер)
         if (duration > 0) {
-            setTimeout(() => {
+            wrapper.timeoutId = setTimeout(() => {
                 if (this.notifications.includes(wrapper)) {
                     this.remove(wrapper);
                 }
@@ -249,6 +274,12 @@ class NotificationManager {
     }
 
     remove(wrapper) {
+        // При удалении очищаем таймер, если он существует
+        if (wrapper.timeoutId) {
+            clearTimeout(wrapper.timeoutId);
+            wrapper.timeoutId = null;
+        }
+
         const index = this.notifications.indexOf(wrapper);
         if (index > -1) {
             this.notifications.splice(index, 1);
