@@ -14,21 +14,35 @@
         <!-- Левое меню -->
         <div class="menu-sidebar box">
             <h2>Menu</h2>
-            <button class="menu-button" onclick="showBlock('block1')">Block 1</button>
+            <button class="menu-button" onclick="showBlock('text-gen')">Text Generator</button>
             <button class="menu-button" onclick="showBlock('async-tasks')">Async Tasks</button>
             <button class="menu-button" onclick="showBlock('settings')">Settings</button>
         </div>
 
         <!-- Основной контент -->
         <div class="content-area">
-            <!-- Блок 1 -->
-            <div id="block1" class="content-block">
+            <!-- Блок генерации текста -->
+            <div id="text-gen" class="content-block">
                 <div class="box title-box">
-                    <h1>Block 1</h1>
+                    <h1>Text Generator</h1>
                 </div>
                 <div class="box">
-                    <h2>Content Coming Soon</h2>
-                    <p>This is a placeholder for Block 1 content.</p>
+                    <div class="generator-container">
+                        <div class="input-container">
+                            <label for="prompt">Enter your prompt:</label>
+                            <textarea id="prompt" rows="4" placeholder="Type your prompt here..."></textarea>
+                        </div>
+                        <button onclick="generateText()" id="generateButton">Generate Text</button>
+                        <div class="output-container">
+                            <label for="generatedText">Generated Text:</label>
+                            <textarea id="generatedText" rows="8" readonly></textarea>
+                            <div id="ratingButtons" style="display: none; margin-top: 10px;">
+                                <button onclick="ratePositive()" class="positive-rate">👍 Хороший ответ</button>
+                                <button onclick="rateNegative()" class="negative-rate">👎 Плохой ответ</button>
+                            </div>
+                            <p id="usedProvider"></p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
