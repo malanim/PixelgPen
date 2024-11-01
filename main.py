@@ -30,6 +30,8 @@ def resource_path(relative_path):
 # Инициализация Eel
 eel.init('web')
 
+close_event = threading.Event()
+
 def show_notification(message, type='info', duration=6000):
     """
     Показывает уведомление через JavaScript интерфейс
@@ -134,7 +136,9 @@ def close_application():
     Закрывает приложение
     """
     try:
-        sys.exit(0)
+        eel.closeWindow()()  # Вызов JavaScript функции для закрытия окна
+        close_event.set()
+        return True
     except Exception as e:
         print(f"Error closing application: {e}")
         return False
@@ -162,12 +166,8 @@ if __name__ == '__main__':
         eel.applyTheme(config.get_theme())()
         
         # Основной цикл приложения
-        while True:
-            try:
-                eel.sleep(1.0)
-            except (SystemExit, KeyboardInterrupt):
-                # Корректное завершение при закрытии окна или прерывании
-                break
+        while not close_event.is_set():
+            eel.sleep(1.0)
     except Exception as e:
         print(f"Application error: {e}")
     finally:

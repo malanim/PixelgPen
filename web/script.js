@@ -1,5 +1,10 @@
 // script.js
 
+eel.expose(closeWindow);
+function closeWindow() {
+    window.close();
+}
+
 // Функция для вызова дополнительной задачи
 async function startTask(taskId) {
     try {
