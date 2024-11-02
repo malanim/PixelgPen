@@ -45,6 +45,29 @@ def show_notification(message, type='info', duration=6000):
     """
     eel.showAlert(message, type, duration)()
 
+''' Генератор '''
+from text_generator import TextGenerator
+from document_generator import DocumentGenerator
+
+text_generator = TextGenerator()
+doc_generator = DocumentGenerator()
+
+@eel.expose
+def generate_text(structure):
+    return text_generator.generate(structure)
+
+@eel.expose
+def export_document(structure):
+    try:
+        result = doc_generator.generate_document(structure)
+        return result
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Ошибка при экспорте документа: {str(e)}"
+        }
+''' Генератор '''
+
 @eel.expose
 def check_first_run():
     is_first = config.is_first_run()

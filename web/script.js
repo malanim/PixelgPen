@@ -527,5 +527,135 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Вызываем эту функцию при загрузке страницы
-document.addEventListener('DOMContentLoaded', loadProviders);
+// Предустановленные пресеты для разных типов документов
+const documentPresets = {
+    report: {
+        sections: ['Основная часть'],
+        required: ['titlePage', 'tableOfContents', 'introduction', 'conclusion', 'references']
+    },
+    presentation: {
+        sections: ['Основные положения', 'Аргументация'],
+        required: ['titlePage', 'introduction', 'conclusion']
+    },
+    coursework: {
+        sections: ['Теоретическая часть', 'Практическая часть', 'Анализ результатов'],
+        required: ['titlePage', 'tableOfContents', 'introduction', 'conclusion', 'references']
+    },
+    project: {
+        sections: ['Описание проекта', 'Планирование', 'Реализация', 'Оценка результатов'],
+        required: ['titlePage', 'tableOfContents', 'introduction', 'conclusion']
+    },
+    custom: {
+        sections: ['Раздел 1'],
+        required: ['titlePage']
+    }
+};
+
+function updatePresetFields() {
+    const documentType = document.getElementById('documentType').value;
+    const preset = documentPresets[documentType];
+
+    // Обновляем чекбоксы
+    for (const checkbox of document.querySelectorAll('.checkbox-group input[type="checkbox"]')) {
+        const id = checkbox.id;
+        checkbox.checked = preset.required.includes(id);
+    }
+
+    // Обновляем разделы
+    const mainSections = document.getElementById('mainSections');
+    mainSections.innerHTML = '';
+    preset.sections.forEach(section => {
+        addSection(section);
+    });
+}
+
+function addSection(sectionName = '') {
+    const mainSections = document.getElementById('mainSections');
+    const sectionDiv = document.createElement('div');
+    sectionDiv.className = 'section-item';
+    
+    sectionDiv.innerHTML = `
+        <input type="text" class="section-name" 
+               value="${sectionName}" 
+               placeholder="Название раздела">
+    `;
+    
+    mainSections.appendChild(sectionDiv);
+}
+
+function removeSection() {
+    const mainSections = document.getElementById('mainSections');
+    if (mainSections.lastChild) {
+        mainSections.removeChild(mainSections.lastChild);
+    }
+}
+
+async function generateDocument() {
+    const documentType = document.getElementById('documentType').value;
+    const theme = document.getElementById('docTheme').value;
+    
+    if (!theme) {
+        showAlert('Пожалуйста, введите тему документа', 'error');
+        return;
+    }
+
+    // Собираем структуру документа
+    const structure = {
+        type: documentType,
+        theme: theme,
+        titlePage: document.getElementById('titlePage').checked,
+        tableOfContents: document.getElementById('tableOfContents').checked,
+        introduction: document.getElementById('introduction').checked,
+        conclusion: document.getElementById('conclusion').checked,
+        references: document.getElementById('references').checked,
+        sections: Array.from(document.querySelectorAll('.section-name'))
+                      .map(input => input.value)
+                      .filter(name => name.trim() !== '')
+    };
+
+    try {
+        const result = await eel.generate_text(structure)();
+        if (result.success) {
+            document.getElementById('generatedText').value = result.text;
+            showAlert('Текст успешно сгенерирован!', 'success');
+        } else {
+            showAlert(result.message || 'Ошибка при генерации текста', 'error');
+        }
+    } catch (error) {
+        showAlert('Произошла ошибка при генерации текста: ' + error.message, 'error');
+    }
+}
+
+async function exportDocument() {
+    const generatedText = document.getElementById('generatedText').value;
+    if (!generatedText) {
+        showAlert('Сначала сгенерируйте текст', 'error');
+        return;
+    }
+
+    // Собираем полную структуру документа
+    const structure = {
+        type: document.getElementById('documentType').value,
+        theme: document.getElementById('docTheme').value,
+        titlePage: document.getElementById('titlePage').checked,
+        tableOfContents: document.getElementById('tableOfContents').checked,
+        introduction: document.getElementById('introduction').checked,
+        conclusion: document.getElementById('conclusion').checked,
+        references: document.getElementById('references').checked,
+        sections: Array.from(document.querySelectorAll('.section-name'))
+                      .map(input => input.value)
+                      .filter(name => name.trim() !== ''),
+        content: generatedText
+    };
+
+    try {
+        const result = await eel.export_document(structure)();
+        if (result.success) {
+            showAlert('Документ успешно экспортирован!', 'success');
+        } else {
+            showAlert(result.message || 'Ошибка при экспорте документа', 'error');
+        }
+    } catch (error) {
+        showAlert('Произошла ошибка при экспорте документа: ' + error.message, 'error');
+    }
+}
