@@ -751,3 +751,195 @@ function moveSectionDown(index) {
         section.parentNode.insertBefore(nextSection, section);
     }
 }
+
+class DocumentNode {
+    constructor(id, title, type = 'section', children = []) {
+        this.id = id;
+        this.title = title;
+        this.type = type;
+        this.children = children;
+    }
+}
+
+let documentStructure = null;
+let selectedNode = null;
+
+function initializeTree() {
+    documentStructure = new DocumentNode('root', 'Документ', 'root');
+    renderTree();
+}
+
+function renderTree() {
+    const treeContainer = document.getElementById('documentTree');
+    treeContainer.innerHTML = '';
+    renderNode(documentStructure, treeContainer);
+}
+
+function renderNode(node, container) {
+    if (node.type === 'root') {
+        node.children.forEach(child => renderNode(child, container));
+        return;
+    }
+
+    const nodeElement = document.createElement('div');
+    nodeElement.className = `tree-node ${node.type}`;
+    nodeElement.setAttribute('data-node-id', node.id);
+
+    const nodeContent = document.createElement('div');
+    nodeContent.className = 'tree-node-content';
+    
+    const icon = document.createElement('span');
+    icon.className = 'tree-node-icon';
+    icon.innerHTML = node.type === 'section' ? '📄' : '📝';
+
+    const title = document.createElement('span');
+    title.className = 'tree-node-title';
+    title.textContent = node.title;
+
+    nodeContent.appendChild(icon);
+    nodeContent.appendChild(title);
+    nodeElement.appendChild(nodeContent);
+
+    nodeElement.onclick = (e) => {
+        e.stopPropagation();
+        selectNode(node);
+    };
+
+    container.appendChild(nodeElement);
+
+    if (node.children.length > 0) {
+        const childrenContainer = document.createElement('div');
+        childrenContainer.className = 'tree-node-children';
+        node.children.forEach(child => renderNode(child, childrenContainer));
+        nodeElement.appendChild(childrenContainer);
+    }
+}
+
+function selectNode(node) {
+    const previousSelected = document.querySelector('.tree-node.selected');
+    if (previousSelected) {
+        previousSelected.classList.remove('selected');
+    }
+
+    const nodeElement = document.querySelector(`[data-node-id="${node.id}"]`);
+    if (nodeElement) {
+        nodeElement.classList.add('selected');
+    }
+
+    selectedNode = node;
+    updateNodeEditor();
+}
+
+function updateNodeEditor() {
+    const titleInput = document.getElementById('nodeTitle');
+    const typeSelect = document.getElementById('nodeType');
+
+    if (selectedNode) {
+        titleInput.value = selectedNode.title;
+        typeSelect.value = selectedNode.type;
+        titleInput.disabled = false;
+        typeSelect.disabled = false;
+    } else {
+        titleInput.value = '';
+        typeSelect.value = 'section';
+        titleInput.disabled = true;
+        typeSelect.disabled = true;
+    }
+}
+
+function addNode(type) {
+    const newId = 'node_' + Date.now();
+    const newNode = new DocumentNode(newId, `Новый ${type}`, type);
+    
+    if (!selectedNode) {
+        documentStructure.children.push(newNode);
+    } else if (type === 'subsection' && selectedNode.type === 'section') {
+        selectedNode.children.push(newNode);
+    } else {
+        const parent = findParentNode(documentStructure, selectedNode.id);
+        if (parent) {
+            const index = parent.children.indexOf(selectedNode);
+            parent.children.splice(index + 1, 0, newNode);
+        } else {
+            documentStructure.children.push(newNode);
+        }
+    }
+    
+    renderTree();
+    selectNode(newNode);
+}
+
+function deleteSelectedNode() {
+    if (!selectedNode) return;
+
+    const parent = findParentNode(documentStructure, selectedNode.id);
+    if (parent) {
+        parent.children = parent.children.filter(node => node.id !== selectedNode.id);
+        selectedNode = null;
+        renderTree();
+        updateNodeEditor();
+    }
+}
+
+function findParentNode(root, nodeId) {
+    for (const child of root.children) {
+        if (child.id === nodeId) return root;
+        const found = findParentNode(child, nodeId);
+        if (found) return found;
+    }
+    return null;
+}
+
+function updateNodeTitle() {
+    if (selectedNode) {
+        selectedNode.title = document.getElementById('nodeTitle').value;
+        renderTree();
+        selectNode(selectedNode);
+    }
+}
+
+function updateNodeType() {
+    if (selectedNode) {
+        const newType = document.getElementById('nodeType').value;
+        if (newType !== selectedNode.type) {
+            selectedNode.type = newType;
+            if (newType === 'section') {
+                // Если изменяем подраздел на раздел, перемещаем его дочерние элементы
+                const parent = findParentNode(documentStructure, selectedNode.id);
+                if (parent) {
+                    const index = parent.children.indexOf(selectedNode);
+                    parent.children.splice(index + 1, 0, ...selectedNode.children);
+                    selectedNode.children = [];
+                }
+            }
+            renderTree();
+            selectNode(selectedNode);
+        }
+    }
+}
+
+function saveStructure() {
+    // Здесь можно добавить логику сохранения структуры
+    console.log('Сохранение структуры:', documentStructure);
+    closeEditor();
+}
+
+function closeEditor() {
+    document.getElementById('structureEditor').classList.remove('active');
+    document.getElementById('structureEditorOverlay').classList.remove('active');
+}
+
+// Инициализация дерева при открытии редактора
+function openStructureEditor() {
+    initializeTree();
+    document.getElementById('structureEditor').classList.add('active');
+    document.getElementById('structureEditorOverlay').classList.add('active');
+}
+
+// Добавляем обработчик для кнопки редактирования структуры
+document.addEventListener('DOMContentLoaded', function() {
+    const editButton = document.querySelector('.edit-button');
+    if (editButton) {
+        editButton.addEventListener('click', openStructureEditor);
+    }
+});

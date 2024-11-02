@@ -52,33 +52,30 @@
                     <div id="structureEditor" class="structure-editor">
                         <h2>Редактирование структуры</h2>
                         <div class="editor-content">
-                            <div class="checkbox-group">
-                                <label>
-                                    <input type="checkbox" id="titlePage" checked>
-                                    Титульный лист
-                                </label>
-                                <label>
-                                    <input type="checkbox" id="tableOfContents" checked>
-                                    Содержание
-                                </label>
-                                <label>
-                                    <input type="checkbox" id="introduction" checked>
-                                    Введение
-                                </label>
-                                <div class="section-list">
-                                    <!-- Секции будут добавляться динамически -->
+                            <div class="tree-container">
+                                <div class="document-tree" id="documentTree">
+                                    <!-- Дерево будет генерироваться динамически -->
                                 </div>
-                                <label>
-                                    <input type="checkbox" id="conclusion" checked>
-                                    Заключение
-                                </label>
-                                <label>
-                                    <input type="checkbox" id="references" checked>
-                                    Список литературы
-                                </label>
+                                <div class="tree-controls">
+                                    <button onclick="addNode('section')">Добавить раздел</button>
+                                    <button onclick="addNode('subsection')">Добавить подраздел</button>
+                                    <button onclick="deleteSelectedNode()">Удалить выбранный</button>
+                                </div>
+                            </div>
+                            <div class="node-editor">
+                                <div class="node-properties">
+                                    <label>Название:
+                                        <input type="text" id="nodeTitle" onchange="updateNodeTitle()">
+                                    </label>
+                                    <label>Тип:
+                                        <select id="nodeType" onchange="updateNodeType()">
+                                            <option value="section">Раздел</option>
+                                            <option value="subsection">Подраздел</option>
+                                        </select>
+                                    </label>
+                                </div>
                             </div>
                             <div class="editor-buttons">
-                                <button onclick="addNewSection()">Добавить раздел</button>
                                 <button onclick="saveStructure()">Сохранить</button>
                                 <button onclick="closeEditor()">Отмена</button>
                             </div>

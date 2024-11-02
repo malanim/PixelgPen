@@ -759,3 +759,74 @@ hr {
 .structure-editor-overlay.active {
     display: block;
 }
+
+.tree-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.document-tree {
+    flex: 1;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.tree-node {
+    padding: 5px;
+    margin: 2px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.tree-node:hover {
+    background-color: var(--secondary-bg);
+}
+
+.tree-node.selected {
+    background-color: var(--accent-color);
+    color: var(--button-text);
+}
+
+.tree-node-content {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.tree-node-icon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+}
+
+.tree-node-children {
+    margin-left: 20px;
+    border-left: 1px dashed var(--input-border);
+    padding-left: 10px;
+}
+
+.node-editor {
+    padding: 15px;
+    background-color: var(--secondary-bg);
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.node-properties {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tree-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
