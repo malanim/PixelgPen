@@ -659,3 +659,95 @@ async function exportDocument() {
         showAlert('Произошла ошибка при экспорте документа: ' + error.message, 'error');
     }
 }
+
+function editStructure() {
+    const editor = document.getElementById('structureEditor');
+    const overlay = document.getElementById('structureEditorOverlay');
+    const documentType = document.getElementById('documentType').value;
+    
+    // Получаем текущую структуру
+    const currentStructure = documentPresets[documentType];
+    
+    // Заполняем редактор текущими данными
+    populateEditor(currentStructure);
+    
+    // Показываем редактор
+    editor.classList.add('active');
+    overlay.classList.add('active');
+}
+
+function populateEditor(structure) {
+    const sectionList = document.querySelector('.section-list');
+    sectionList.innerHTML = '';
+    
+    structure.sections.forEach((section, index) => {
+        const sectionElement = createSectionElement(section, index);
+        sectionList.appendChild(sectionElement);
+    });
+}
+
+function createSectionElement(sectionName, index) {
+    const div = document.createElement('div');
+    div.className = 'section-item';
+    div.innerHTML = `
+        <input type="text" value="${sectionName}" class="section-input">
+        <button onclick="removeSection(${index})">Удалить</button>
+        <button onclick="moveSectionUp(${index})">↑</button>
+        <button onclick="moveSectionDown(${index})">↓</button>
+    `;
+    return div;
+}
+
+function addNewSection() {
+    const sectionList = document.querySelector('.section-list');
+    const newSection = createSectionElement('Новый раздел', sectionList.children.length);
+    sectionList.appendChild(newSection);
+}
+
+function saveStructure() {
+    const documentType = document.getElementById('documentType').value;
+    const sections = Array.from(document.querySelectorAll('.section-input'))
+                        .map(input => input.value);
+    
+    // Обновляем пресет
+    documentPresets[documentType].sections = sections;
+    
+    // Обновляем отображение на основной странице
+    updatePresetFields();
+    
+    closeEditor();
+    showAlert('Структура документа сохранена', 'success');
+}
+
+function closeEditor() {
+    const editor = document.getElementById('structureEditor');
+    const overlay = document.getElementById('structureEditorOverlay');
+    
+    editor.classList.remove('active');
+    overlay.classList.remove('active');
+}
+
+function removeSection(index) {
+    const sections = document.querySelectorAll('.section-item');
+    if (sections[index]) {
+        sections[index].remove();
+    }
+}
+
+function moveSectionUp(index) {
+    const sections = document.querySelectorAll('.section-item');
+    if (index > 0) {
+        const section = sections[index];
+        const previousSection = sections[index - 1];
+        section.parentNode.insertBefore(section, previousSection);
+    }
+}
+
+function moveSectionDown(index) {
+    const sections = document.querySelectorAll('.section-item');
+    if (index < sections.length - 1) {
+        const section = sections[index];
+        const nextSection = sections[index + 1];
+        section.parentNode.insertBefore(nextSection, section);
+    }
+}

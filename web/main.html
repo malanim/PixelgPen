@@ -39,6 +39,7 @@
                             <option value="project">Проект</option>
                             <option value="custom">Свой документ</option>
                         </select>
+                        <button onclick="editStructure()" class="edit-button">Редактировать</button>
                     </div>
             
                     <!-- Тема документа -->
@@ -46,40 +47,41 @@
                         <label for="docTheme">Тема:</label>
                         <input type="text" id="docTheme" placeholder="Введите тему документа">
                     </div>
-            
-                    <!-- Настройки пресета -->
-                    <div class="preset-settings">
-                        <h3>Структура документа:</h3>
-                        <div class="checkbox-group">
-                            <label>
-                                <input type="checkbox" id="titlePage" checked>
-                                Титульный лист
-                            </label>
-                            <label>
-                                <input type="checkbox" id="tableOfContents" checked>
-                                Содержание
-                            </label>
-                            <label>
-                                <input type="checkbox" id="introduction" checked>
-                                Введение
-                            </label>
-                            <div id="mainSections">
-                                <!-- Динамически добавляемые разделы -->
+
+                    <div id="structureEditorOverlay" class="structure-editor-overlay"></div>
+                    <div id="structureEditor" class="structure-editor">
+                        <h2>Редактирование структуры</h2>
+                        <div class="editor-content">
+                            <div class="checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="titlePage" checked>
+                                    Титульный лист
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="tableOfContents" checked>
+                                    Содержание
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="introduction" checked>
+                                    Введение
+                                </label>
+                                <div class="section-list">
+                                    <!-- Секции будут добавляться динамически -->
+                                </div>
+                                <label>
+                                    <input type="checkbox" id="conclusion" checked>
+                                    Заключение
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="references" checked>
+                                    Список литературы
+                                </label>
                             </div>
-                            <label>
-                                <input type="checkbox" id="conclusion" checked>
-                                Заключение
-                            </label>
-                            <label>
-                                <input type="checkbox" id="references" checked>
-                                Список литературы
-                            </label>
-                        </div>
-                        
-                        <!-- Кнопки управления разделами -->
-                        <div class="sections-control">
-                            <button onclick="addSection()">Добавить раздел</button>
-                            <button onclick="removeSection()">Удалить раздел</button>
+                            <div class="editor-buttons">
+                                <button onclick="addNewSection()">Добавить раздел</button>
+                                <button onclick="saveStructure()">Сохранить</button>
+                                <button onclick="closeEditor()">Отмена</button>
+                            </div>
                         </div>
                     </div>
             
