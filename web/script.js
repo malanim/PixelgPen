@@ -73,7 +73,7 @@ function closeMenu() {
 
     setTimeout(() => {
         hamburgerButton.classList.remove('active', 'closing');
-    }, 300);
+    }, 50);
 }
 
 function createTypingText(text) {
@@ -501,58 +501,7 @@ let lastUsedProvider = null;
 
 // Обновляем функцию generateText
 async function generateText() {
-    const prompt = document.getElementById('prompt').value.trim();
-    if (!prompt) {
-        showAlert('Пожалуйста, введите запрос', 'error');
-        return;
-    }
-
-    const generateButton = document.getElementById('generateButton');
-    generateButton.disabled = true;
-    generateButton.textContent = 'Generating...';
-
-    try {
-        const [result, provider] = await eel.generate_text(prompt)();
-        document.getElementById('generatedText').value = result;
-        lastUsedProvider = provider; // Сохраняем провайдера
-        showAlert(`Текст успешно сгенерирован с помощью ${provider}!`, 'success');
-        // Показываем кнопки оценки
-        document.getElementById('ratingButtons').style.display = 'block';
-    } catch (error) {
-        showAlert('Что-то пошло нетак..', 'error');
-        console.error(error);
-    } finally {
-        generateButton.disabled = false;
-        generateButton.textContent = 'Generate Text';
-    }
-}
-
-// Функция для отрицательной оценки
-async function rateNegative() {
-    if (lastUsedProvider) {
-        const [success, message] = await eel.rate_response_negative(lastUsedProvider)();
-        if (success) {
-            showAlert(`Провайдер ${lastUsedProvider} перемещен в конец списка`, 'info');
-        } else {
-            showAlert('Не удалось обновить рейтинг провайдера', 'error');
-        }
-    }
-    // Скрываем кнопки оценки
-    document.getElementById('ratingButtons').style.display = 'none';
-}
-
-// Функция для положительной оценки
-function ratePositive() {
-    // Просто скрываем кнопки оценки, так как положительный провайдер 
-    // уже переместился в начало списка после успешной генерации
-    document.getElementById('ratingButtons').style.display = 'none';
-    showAlert('Спасибо за оценку!', 'success');
-}
-
-async function loadProviders() {
-    const providers = await eel.get_available_providers()();
-    console.log("Available providers:", providers);
-    // Здесь вы можете добавить код для отображения списка провайдеров в интерфейсе, если это необходимо
+    showAlert('This feature is not available in this version.', 'info');
 }
 
 document.addEventListener('DOMContentLoaded', function() {

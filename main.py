@@ -154,43 +154,6 @@ def close_application():
         print(f"Error closing application: {e}")
         return False
 
-''' --- Генератор текста начало --- '''
-text_generator = None
-
-@eel.expose
-def generate_text(prompt):
-    global text_generator
-    if text_generator is None:
-        from text_generator import TextGenerator
-        text_generator = TextGenerator()
-    
-    async def async_generate():
-        result, provider = await text_generator.generate_text_fastest(prompt)
-        return result, provider
-
-    return asyncio.run(async_generate())
-
-@eel.expose
-def get_available_providers():
-    global text_generator
-    if text_generator is None:
-        from text_generator import TextGenerator
-        text_generator = TextGenerator()
-    return text_generator.get_available_providers()
-
-@eel.expose
-def rate_response_negative(provider_name):
-    global text_generator
-    if text_generator is None:
-        from text_generator import TextGenerator
-        text_generator = TextGenerator()
-    
-    success = text_generator.move_provider_to_end(provider_name)
-    if success:
-        return True, "Provider moved to end of list"
-    return False, "Failed to move provider"
-''' --- Генератор текста конец --- '''
-
 # Обработка запуска и закрытия веб-приложения
 if __name__ == '__main__':
     config.update_app_version()
