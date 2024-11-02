@@ -13,21 +13,15 @@
     <div class="main-container">
         <!-- Левое меню -->
         <button class="hamburger-button">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span data-block="block1"></span>
+            <span data-block="block2"></span>
+            <span data-block="block3"></span>
         </button>
-        <div class="menu-sidebar box collapsed">
-            <h2>Menu</h2>
-            <button class="menu-button" onclick="showBlock('text-gen')">Text Generator</button>
-            <button class="menu-button" onclick="showBlock('async-tasks')">Async Tasks</button>
-            <button class="menu-button" onclick="showBlock('settings')">Settings</button>
-        </div>
 
         <!-- Основной контент -->
         <div class="content-area">
             <!-- Блок генерации текста -->
-            <div id="text-gen" class="content-block">
+            <div id="block1" class="content-block">
                 <div class="box title-box">
                     <h1>Text Generator</h1>
                 </div>
@@ -52,7 +46,7 @@
             </div>
 
             <!-- Блок асинхронных задач -->
-            <div id="async-tasks" class="content-block">
+            <div id="block2" class="content-block">
                 <div class="box title-box">
                     <h1>Async Tasks Demo</h1>
                 </div>
@@ -72,7 +66,7 @@
             </div>
 
             <!-- Блок 3 - Настройки -->
-            <div id="settings" class="content-block">
+            <div id="block3" class="content-block">
                 <div class="box title-box">
                     <h1>Настройки</h1>
                 </div>

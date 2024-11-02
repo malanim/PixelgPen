@@ -5,42 +5,112 @@ function closeWindow() {
     window.close();
 }
 
-// Добавьте в начало файла
 document.addEventListener('DOMContentLoaded', function() {
     const hamburgerButton = document.querySelector('.hamburger-button');
-    const menuSidebar = document.querySelector('.menu-sidebar');
     const contentArea = document.querySelector('.content-area');
-
-    hamburgerButton.addEventListener('click', function() {
-        hamburgerButton.classList.toggle('active');
-        menuSidebar.classList.toggle('collapsed');
-        contentArea.classList.toggle('expanded');
-    });
-
-    // Закрывать меню при клике вне его
-    document.addEventListener('click', function(event) {
-        const isClickInside = menuSidebar.contains(event.target) || 
-                            hamburgerButton.contains(event.target);
-
-        if (!isClickInside && !menuSidebar.classList.contains('collapsed')) {
-            hamburgerButton.classList.remove('active');
-            menuSidebar.classList.add('collapsed');
-            contentArea.classList.remove('expanded');
+    
+    hamburgerButton.addEventListener('click', function(event) {
+        event.stopPropagation();
+        
+        // Если меню открыто
+        if (this.classList.contains('active')) {
+            // Проверяем, был ли клик по span элементу или его содержимому
+            const targetSpan = event.target.closest('span[data-block]');
+            if (targetSpan) {
+                const blockId = targetSpan.getAttribute('data-block');
+                if (blockId) {
+                    showBlock(blockId);
+                    closeMenu();
+                }
+            }
+        } else {
+            // Если меню закрыто, открываем его
+            openMenu();
         }
     });
 
-    // Закрывать меню при выборе пункта меню на мобильных устройствах
-    const menuButtons = document.querySelectorAll('.menu-button');
-    menuButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            if (window.innerWidth <= 768) {
-                hamburgerButton.classList.remove('active');
-                menuSidebar.classList.add('collapsed');
-                contentArea.classList.remove('expanded');
-            }
-        });
+    // Закрытие меню при клике вне его
+    document.addEventListener('click', function(event) {
+        if (hamburgerButton.classList.contains('active') &&
+            !hamburgerButton.contains(event.target)) {
+            closeMenu();
+        }
     });
 });
+
+function openMenu() {
+    const hamburgerButton = document.querySelector('.hamburger-button');
+    const contentArea = document.querySelector('.content-area');
+    
+    // Очищаем предыдущие контейнеры для текста
+    hamburgerButton.querySelectorAll('.typing-text-container').forEach(el => el.remove());
+    
+    // Создаем новые контейнеры для текста с четким соответствием
+    const menuItems = [
+        { span: hamburgerButton.querySelector('span[data-block="block1"]'), text: "Text Generator" },
+        { span: hamburgerButton.querySelector('span[data-block="block2"]'), text: "Async Tasks" },
+        { span: hamburgerButton.querySelector('span[data-block="block3"]'), text: "Settings" }
+    ];
+
+    const textContainers = menuItems.map(item => {
+        if (item.span) {
+            const container = createTypingText(item.text);
+            // Очищаем содержимое span перед добавлением нового текста
+            item.span.innerHTML = '';
+            item.span.appendChild(container);
+            return container;
+        }
+        return null;
+    }).filter(container => container !== null);
+
+    // Активируем меню
+    hamburgerButton.classList.add('active');
+    contentArea.classList.add('expanded');
+
+    // Запускаем анимацию печатания после раскрытия меню
+    setTimeout(() => {
+        animateTypingSequentially(textContainers);
+    }, 300);
+}
+
+function closeMenu() {
+    const hamburgerButton = document.querySelector('.hamburger-button');
+    const contentArea = document.querySelector('.content-area');
+    
+    hamburgerButton.classList.add('closing');
+    
+    // Удаляем контейнеры с текстом
+    hamburgerButton.querySelectorAll('.typing-text-container').forEach(el => {
+        el.style.opacity = '0';
+        el.style.width = '0';
+    });
+
+    setTimeout(() => {
+        hamburgerButton.classList.remove('active', 'closing');
+        contentArea.classList.remove('expanded');
+        // Очищаем содержимое всех span элементов
+        hamburgerButton.querySelectorAll('span').forEach(span => {
+            span.innerHTML = '';
+        });
+    }, 300);
+}
+
+function createTypingText(text) {
+    const container = document.createElement('span');
+    container.className = 'typing-text-container';
+    container.textContent = text;
+    return container;
+}
+
+function animateTypingSequentially(containers) {
+    let delay = 300;
+    
+    containers.forEach((container, index) => {
+        setTimeout(() => {
+            container.classList.add('typing-animation');
+        }, delay + (index * 500));
+    });
+}
 
 // Функция для вызова дополнительной задачи
 async function startTask(taskId) {
@@ -83,10 +153,10 @@ function showBlock(blockId) {
     document.getElementById(blockId).classList.add('active');
     
     // Обновляем активную кнопку меню
-    document.querySelectorAll('.menu-button').forEach(button => {
+    document.querySelectorAll('.hamburger-button span').forEach(button => {
         button.classList.remove('active');
     });
-    const activeButton = document.querySelector(`.menu-button[onclick*="${blockId}"]`);
+    const activeButton = document.querySelector(`.hamburger-button span[data-block="${blockId}"]`);
     if (activeButton) {
         activeButton.classList.add('active');
     }
