@@ -90,12 +90,18 @@ body {
 .main-container {
     display: flex;
     height: 100vh;
+    position: relative; /* Добавляем относительное позиционирование */
+    padding-left: 60px; /* Добавляем отступ слева для кнопки-гамбургера */
 }
 
 .menu-sidebar {
+    position: fixed;
+    left: 60px; /* Смещаем меню вправо от кнопки-гамбургера */
+    top: 0;
+    height: 100%;
     width: 200px;
-    background-color: var(--secondary-bg);
-    padding: 20px;
+    transition: transform 0.3s ease;
+    z-index: 998; /* Уменьшаем z-index, чтобы был меньше чем у кнопки */
 }
 
 .content-area {
@@ -520,4 +526,68 @@ hr {
 
 .negative-rate:hover {
     background-color: #da190b;
+}
+
+/* Стили для кнопки-гамбургера */
+.hamburger-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 25px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 999;
+}
+
+.hamburger-button span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-text); /* Используем цвет текста из темы */
+    transition: all 0.3s ease;
+}
+
+/* Анимация для кнопки-гамбургера при активном состоянии */
+.hamburger-button.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-button.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-button.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Стили для меню */
+.menu-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    transition: transform 0.3s ease;
+    z-index: 999;
+}
+
+.menu-sidebar.collapsed {
+    transform: translateX(-260px); /* Увеличиваем смещение */
+}
+
+/* Адаптация основного контента */
+.content-area {
+    flex-grow: 1;
+    padding: 20px;
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+}
+
+.content-area.expanded {
+    margin-left: 200px; /* ширина вашего меню */
 }

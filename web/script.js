@@ -5,6 +5,43 @@ function closeWindow() {
     window.close();
 }
 
+// Добавьте в начало файла
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburgerButton = document.querySelector('.hamburger-button');
+    const menuSidebar = document.querySelector('.menu-sidebar');
+    const contentArea = document.querySelector('.content-area');
+
+    hamburgerButton.addEventListener('click', function() {
+        hamburgerButton.classList.toggle('active');
+        menuSidebar.classList.toggle('collapsed');
+        contentArea.classList.toggle('expanded');
+    });
+
+    // Закрывать меню при клике вне его
+    document.addEventListener('click', function(event) {
+        const isClickInside = menuSidebar.contains(event.target) || 
+                            hamburgerButton.contains(event.target);
+
+        if (!isClickInside && !menuSidebar.classList.contains('collapsed')) {
+            hamburgerButton.classList.remove('active');
+            menuSidebar.classList.add('collapsed');
+            contentArea.classList.remove('expanded');
+        }
+    });
+
+    // Закрывать меню при выборе пункта меню на мобильных устройствах
+    const menuButtons = document.querySelectorAll('.menu-button');
+    menuButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                hamburgerButton.classList.remove('active');
+                menuSidebar.classList.add('collapsed');
+                contentArea.classList.remove('expanded');
+            }
+        });
+    });
+});
+
 // Функция для вызова дополнительной задачи
 async function startTask(taskId) {
     try {
