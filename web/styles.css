@@ -108,6 +108,12 @@ body {
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
+    transition: margin-left 0.5s ease-in-out; /* Добавляем плавный переход */
+}
+
+/* Для сдвинутого состояния */
+.content-area.expanded {
+    margin-left: 200px; /* Ширина выдвинутого меню */
 }
 
 .menu-button {
@@ -144,9 +150,15 @@ body {
     background-color: var(--secondary-bg);
     color: var(--secondary-text);
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
     padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.box:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
 }
 
 .title-box {
@@ -528,7 +540,7 @@ hr {
     background-color: #da190b;
 }
 
-/* Обновленные стили для кнопки-гамбургера */
+/* Базовые стили для кнопки-гамбургера */
 .hamburger-button {
     display: flex;
     flex-direction: column;
@@ -543,7 +555,7 @@ hr {
     top: 20px;
     left: 20px;
     z-index: 1000;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 /* Базовые стили для полосок гамбургера */
@@ -552,7 +564,7 @@ hr {
     width: 100%;
     height: 3px;
     background-color: var(--primary-text);
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     position: relative;
     border-radius: 2px;
 }
@@ -569,17 +581,30 @@ hr {
 /* Стили для span в активном состоянии */
 .hamburger-button.active span {
     width: 100%;
-    height: 40px; /* Увеличенная высота для кнопок */
+    height: 40px;
     margin: 5px 0;
     background-color: var(--button-bg);
     border-radius: 4px;
     display: flex;
     align-items: center;
+    padding-left: 15px; /* Отступ для текста */
+    color: var(--button-text);
     cursor: pointer;
 }
 
+/* Эффект при наведении */
+.hamburger-button.active span:hover {
+    background-color: var(--button-hover);
+    transform: scale(1.02);
+}
+
+/* Активная кнопка */
+.hamburger-button.active span.active {
+    background-color: var(--accent-color);
+}
+
 /* Контейнер для текста */
-.typing-text-container {
+/* .typing-text-container {
     position: absolute;
     left: 15px;
     color: var(--button-text);
@@ -587,7 +612,7 @@ hr {
     white-space: nowrap;
     opacity: 0;
     width: 0;
-}
+} */
 
 /* Анимация печатания */
 @keyframes typing {
@@ -608,19 +633,8 @@ hr {
     opacity: 1;
 }
 
-/* Эффект при наведении */
-.hamburger-button.active span:hover {
-    background-color: var(--button-hover);
-    transform: scale(1.02);
-}
-
-/* Активная кнопка */
-.hamburger-button.active span.active {
-    background-color: var(--accent-color);
-}
-
 /* Добавляем затемнение фона при открытом меню */
-.hamburger-button.active::before {
+/* .hamburger-button.active::before {
     content: '';
     position: fixed;
     top: 0;
@@ -630,4 +644,4 @@ hr {
     background-color: rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(3px);
     z-index: -1;
-}
+} */

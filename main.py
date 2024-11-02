@@ -46,6 +46,13 @@ def show_notification(message, type='info', duration=6000):
     eel.showAlert(message, type, duration)()
 
 @eel.expose
+def check_first_run():
+    is_first = config.is_first_run()
+    if is_first:
+        config.set_not_first_run()
+    return is_first
+
+@eel.expose
 def long_running_task(task_id):
     def run_task():
 

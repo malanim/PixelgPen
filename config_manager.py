@@ -180,3 +180,15 @@ class ConfigManager:
         except Exception as e:
             print(f"Error deleting config file: {e}")
             return False
+    
+    def is_first_run(self):
+        try:
+            return self.config.getboolean('App', 'first_run', fallback=True)
+        except:
+            return True
+
+    def set_not_first_run(self):
+        if 'App' not in self.config:
+            self.config['App'] = {}
+        self.config['App']['first_run'] = 'false'
+        self.save_config()

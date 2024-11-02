@@ -38,39 +38,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function openMenu() {
+async function openMenu() {
     const hamburgerButton = document.querySelector('.hamburger-button');
     const contentArea = document.querySelector('.content-area');
     
-    // Очищаем предыдущие контейнеры для текста
-    hamburgerButton.querySelectorAll('.typing-text-container').forEach(el => el.remove());
+    hamburgerButton.classList.add('active');
+    contentArea.classList.add('expanded');
     
-    // Создаем новые контейнеры для текста с четким соответствием
+    // Обновляем текст кнопок напрямую
     const menuItems = [
         { span: hamburgerButton.querySelector('span[data-block="block1"]'), text: "Text Generator" },
         { span: hamburgerButton.querySelector('span[data-block="block2"]'), text: "Async Tasks" },
         { span: hamburgerButton.querySelector('span[data-block="block3"]'), text: "Settings" }
     ];
 
-    const textContainers = menuItems.map(item => {
+    menuItems.forEach(item => {
         if (item.span) {
-            const container = createTypingText(item.text);
-            // Очищаем содержимое span перед добавлением нового текста
-            item.span.innerHTML = '';
-            item.span.appendChild(container);
-            return container;
+            item.span.textContent = item.text;
         }
-        return null;
-    }).filter(container => container !== null);
-
-    // Активируем меню
-    hamburgerButton.classList.add('active');
-    contentArea.classList.add('expanded');
-
-    // Запускаем анимацию печатания после раскрытия меню
-    setTimeout(() => {
-        animateTypingSequentially(textContainers);
-    }, 300);
+    });
 }
 
 function closeMenu() {
@@ -78,20 +64,15 @@ function closeMenu() {
     const contentArea = document.querySelector('.content-area');
     
     hamburgerButton.classList.add('closing');
+    contentArea.classList.remove('expanded');
     
-    // Удаляем контейнеры с текстом
-    hamburgerButton.querySelectorAll('.typing-text-container').forEach(el => {
-        el.style.opacity = '0';
-        el.style.width = '0';
+    // Очищаем текст кнопок
+    hamburgerButton.querySelectorAll('span').forEach(span => {
+        span.textContent = '';
     });
 
     setTimeout(() => {
         hamburgerButton.classList.remove('active', 'closing');
-        contentArea.classList.remove('expanded');
-        // Очищаем содержимое всех span элементов
-        hamburgerButton.querySelectorAll('span').forEach(span => {
-            span.innerHTML = '';
-        });
     }, 300);
 }
 
