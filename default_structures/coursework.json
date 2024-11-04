@@ -1,0 +1,164 @@
+{
+    "type": "coursework",
+    "structure": {
+      "id": "root",
+      "title": "Курсовая работа",
+      "type": "root",
+      "children": [
+        {
+          "id": "titlePage",
+          "title": "Титульный лист",
+          "type": "section",
+          "children": []
+        },
+        {
+          "id": "node_1730734091268",
+          "title": "Содержание",
+          "type": "section",
+          "children": []
+        },
+        {
+          "id": "intro",
+          "title": "Введение",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_1730734019158",
+              "title": "Актуальность исследования",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_1730734151984",
+              "title": "Цель исследования",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_1730734188453",
+              "title": "Объект исследования",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_1730734192749",
+              "title": "Новый subsection",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_1730734195701",
+              "title": "Предмет исследования",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_1730734201493",
+              "title": "Задачи исследования",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_1730734204777",
+              "title": "Методы исследования",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_1730734206613",
+              "title": "Структура работы",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "theoreticalPart",
+          "title": "Теоретическая часть",
+          "type": "section",
+          "children": [
+            {
+              "id": "subsection1",
+              "title": "Подраздел 1",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "subsection2",
+              "title": "Подраздел 2",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_1730734254900",
+              "title": "Подраздел 3",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "practicalPart",
+          "title": "Практическая часть",
+          "type": "section",
+          "children": []
+        },
+        {
+          "id": "conclusion",
+          "title": "Заключение",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_1730734288652",
+              "title": "Подведение итогов",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_1730734307981",
+              "title": "Ответы на поставленные задачи",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_1730734316789",
+              "title": "Выводы",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_1730734323929",
+              "title": "Рекомендации",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_1730734327173",
+              "title": "Перспективы дальнейших исследований",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_1730734334972",
+              "title": "Личное мнение автора",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "references",
+          "title": "Список литературы",
+          "type": "section",
+          "children": []
+        }
+      ]
+    },
+    "required": [
+      "titlePage",
+      "tableOfContents",
+      "introduction",
+      "conclusion",
+      "references"
+    ]
+}

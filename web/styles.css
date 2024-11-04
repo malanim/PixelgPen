@@ -737,86 +737,47 @@ hr {
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     z-index: 1000;
-    width: 80%;
-    max-width: 600px;
+    width: 90%;
+    max-width: 1200px;
+    height: 80vh;
 }
 
 .structure-editor.active {
     display: block;
 }
 
-.structure-editor-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-}
-
-.structure-editor-overlay.active {
-    display: block;
-}
-
-.tree-container {
+.editor-content {
     display: flex;
+    height: calc(100% - 40px); /* Вычитаем высоту заголовка */
     gap: 20px;
-    margin-bottom: 20px;
+}
+
+.editor-left-panel {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-right: 20px;
+    border-right: 1px solid var(--input-border);
+}
+
+.editor-right-panel {
+    flex-grow: 1;
+    overflow: hidden;
 }
 
 .document-tree {
-    flex: 1;
-    max-height: 400px;
+    height: 100%;
     overflow-y: auto;
     border: 1px solid var(--input-border);
     border-radius: 4px;
     padding: 10px;
 }
 
-.tree-node {
-    padding: 5px;
-    margin: 2px 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-}
-
-.tree-node:hover {
-    background-color: var(--secondary-bg);
-}
-
-.tree-node.selected {
-    background-color: var(--accent-color);
-    color: var(--button-text);
-}
-
-.tree-node-content {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.tree-node-icon {
-    width: 16px;
-    height: 16px;
-    display: inline-block;
-}
-
-.tree-node-children {
-    margin-left: 20px;
-    border-left: 1px dashed var(--input-border);
-    padding-left: 10px;
-}
-
 .node-editor {
-    padding: 15px;
     background-color: var(--secondary-bg);
     border-radius: 4px;
-    margin-top: 10px;
+    padding: 15px;
 }
 
 .node-properties {
@@ -825,8 +786,138 @@ hr {
     gap: 10px;
 }
 
-.tree-controls {
+.node-properties label {
     display: flex;
     flex-direction: column;
     gap: 5px;
+}
+
+.node-properties input,
+.node-properties select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+}
+
+.tree-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.tree-controls button {
+    width: 100%;
+}
+
+.editor-buttons {
+    margin-top: auto;
+}
+
+.editor-buttons p {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.editor-buttons button {
+    flex: 1;
+}
+
+/* Стили для дерева документа */
+.document-tree {
+    height: 100%;
+    overflow-y: auto;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+}
+
+/* Базовые стили для узлов дерева */
+.tree-node {
+    padding: 5px 0;
+    margin: 2px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+/* Контейнер для дочерних элементов */
+.tree-children {
+    margin-left: 20px;
+    border-left: 1px dashed var(--input-border);
+    padding-left: 10px;
+}
+
+/* Стили для выбранного узла */
+.tree-node.selected {
+    background-color: var(--accent-color);
+    color: var(--text-color-inverse);
+    border-radius: 4px;
+    padding: 5px 10px;
+}
+
+/* Стили для иконок разворачивания/сворачивания */
+.tree-node .expand-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    border: 1px solid var(--input-border);
+    border-radius: 3px;
+}
+
+/* Стили для текста узла */
+.tree-node .node-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Стили для различных типов узлов */
+.tree-node[data-type="section"] {
+    font-weight: bold;
+}
+
+.tree-node[data-type="subsection"] {
+    font-weight: normal;
+}
+
+/* Стили для состояния наведения */
+.tree-node:hover:not(.selected) {
+    background-color: var(--hover-bg);
+    border-radius: 4px;
+    padding: 5px 10px;
+}
+
+/* Анимация для разворачивания/сворачивания */
+.tree-children {
+    transition: all 0.3s ease;
+}
+
+.tree-children.collapsed {
+    display: none;
+}
+
+/* Стили для иконок состояния узла */
+.expand-icon.expanded::before {
+    content: "-";
+}
+
+.expand-icon.collapsed::before {
+    content: "+";
+}
+
+/* Стили для перетаскивания */
+.tree-node.dragging {
+    opacity: 0.5;
+}
+
+.tree-node.drag-over {
+    border-top: 2px solid var(--accent-color);
 }

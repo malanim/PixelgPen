@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Pixel&Pen</title>
+    <meta charset="UTF-8">
     <script type="text/javascript" src="/eel.js"></script>
     <script src="script.js"></script>
     <link rel="stylesheet" href="styles.css">
@@ -39,7 +40,7 @@
                             <option value="project">Проект</option>
                             <option value="custom">Свой документ</option>
                         </select>
-                        <button onclick="editStructure()" class="edit-button">Редактировать</button>
+                        <button onclick="openStructureEditor()" class="edit-button">Редактировать</button>
                     </div>
             
                     <!-- Тема документа -->
@@ -52,32 +53,41 @@
                     <div id="structureEditor" class="structure-editor">
                         <h2>Редактирование структуры</h2>
                         <div class="editor-content">
-                            <div class="tree-container">
-                                <div class="document-tree" id="documentTree">
-                                    <!-- Дерево будет генерироваться динамически -->
+                            <div class="editor-left-panel">
+                                <div class="node-editor">
+                                    <div class="node-properties">
+                                        <label>Название:
+                                            <input type="text" id="nodeTitle" onchange="updateNodeTitle()">
+                                        </label>
+                                        <label>Тип:
+                                            <select id="nodeType" onchange="updateNodeType()">
+                                                <option value="section">Раздел</option>
+                                                <option value="subsection">Подраздел</option>
+                                            </select>
+                                        </label>
+                                    </div>
                                 </div>
                                 <div class="tree-controls">
                                     <button onclick="addNode('section')">Добавить раздел</button>
                                     <button onclick="addNode('subsection')">Добавить подраздел</button>
                                     <button onclick="deleteSelectedNode()">Удалить выбранный</button>
                                 </div>
-                            </div>
-                            <div class="node-editor">
-                                <div class="node-properties">
-                                    <label>Название:
-                                        <input type="text" id="nodeTitle" onchange="updateNodeTitle()">
-                                    </label>
-                                    <label>Тип:
-                                        <select id="nodeType" onchange="updateNodeType()">
-                                            <option value="section">Раздел</option>
-                                            <option value="subsection">Подраздел</option>
-                                        </select>
-                                    </label>
+                                <div class="editor-buttons">
+                                    <p>
+                                        <button onclick="saveStructure()">Сохранить</button>
+                                        <button onclick="closeEditor()">Отмена</button>
+                                    </p>
+                                    <p>
+                                        <button onclick="exportStructure()">Экспорт структуры</button>
+                                        <input type="file" id="importStructure" style="display: none;" onchange="importStructure(event)">
+                                        <button onclick="document.getElementById('importStructure').click()">Импорт структуры</button>
+                                    </p>
                                 </div>
                             </div>
-                            <div class="editor-buttons">
-                                <button onclick="saveStructure()">Сохранить</button>
-                                <button onclick="closeEditor()">Отмена</button>
+                            <div class="editor-right-panel">
+                                <div class="document-tree" id="documentTree">
+                                    <!-- Дерево будет генерироваться динамически -->
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,0 +1,227 @@
+{
+    "type": "project",
+    "structure": {
+      "id": "root",
+      "title": "Проект",
+      "type": "root",
+      "children": [
+        {
+          "id": "titlePage",
+          "title": "Титульный лист",
+          "type": "section",
+          "children": []
+        },
+        {
+          "id": "contents",
+          "title": "Содержание",
+          "type": "section",
+          "children": []
+        },
+        {
+          "id": "intro",
+          "title": "Введение",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_1",
+              "title": "Актуальность проекта",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_2",
+              "title": "Цели проекта",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_3",
+              "title": "Задачи проекта",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "projectDescription",
+          "title": "Описание проекта",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_4",
+              "title": "Общая концепция",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_5",
+              "title": "Целевая аудитория",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_6",
+              "title": "Ожидаемые результаты",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "planning",
+          "title": "Планирование",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_7",
+              "title": "Этапы реализации",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_8",
+              "title": "Сроки выполнения",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_9",
+              "title": "Ресурсы",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_10",
+              "title": "Бюджет",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "implementation",
+          "title": "Реализация",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_11",
+              "title": "Методология",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_12",
+              "title": "Технические решения",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_13",
+              "title": "Контроль качества",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "risks",
+          "title": "Анализ рисков",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_14",
+              "title": "Идентификация рисков",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_15",
+              "title": "Меры по минимизации рисков",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "evaluation",
+          "title": "Оценка результатов",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_16",
+              "title": "Критерии успешности",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_17",
+              "title": "Методы оценки",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_18",
+              "title": "Показатели эффективности",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "conclusion",
+          "title": "Заключение",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_19",
+              "title": "Основные выводы",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_20",
+              "title": "Перспективы развития",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "references",
+          "title": "Список источников",
+          "type": "section",
+          "children": []
+        },
+        {
+          "id": "appendices",
+          "title": "Приложения",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_21",
+              "title": "Документация",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_22",
+              "title": "Дополнительные материалы",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    "required": [
+      "titlePage",
+      "tableOfContents",
+      "introduction",
+      "projectDescription",
+      "planning",
+      "implementation",
+      "evaluation",
+      "conclusion",
+      "references"
+    ]
+  }

@@ -1,0 +1,63 @@
+{
+    "type": "custom",
+    "structure": {
+      "id": "root",
+      "title": "Свой документ",
+      "type": "root",
+      "children": [
+        {
+          "id": "section_1",
+          "title": "Раздел 1",
+          "type": "section",
+          "children": [
+            {
+              "id": "subsection_1_1",
+              "title": "Подраздел 1.1",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "subsection_1_2",
+              "title": "Подраздел 1.2",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "section_2",
+          "title": "Раздел 2",
+          "type": "section",
+          "children": [
+            {
+              "id": "subsection_2_1",
+              "title": "Подраздел 2.1",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "subsection_2_2",
+              "title": "Подраздел 2.2",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "section_3",
+          "title": "Раздел 3",
+          "type": "section",
+          "children": []
+        }
+      ]
+    },
+    "required": ["section_1"],
+    "optional": [
+      "titlePage",
+      "tableOfContents",
+      "introduction",
+      "conclusion",
+      "references",
+      "appendices"
+    ]
+}

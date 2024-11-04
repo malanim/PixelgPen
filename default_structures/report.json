@@ -1,0 +1,103 @@
+{
+    "type": "report",
+    "structure": {
+      "id": "root",
+      "title": "Реферат",
+      "type": "root",
+      "children": [
+        {
+          "id": "titlePage",
+          "title": "Титульный лист",
+          "type": "section",
+          "children": []
+        },
+        {
+          "id": "node_1",
+          "title": "Содержание",
+          "type": "section",
+          "children": []
+        },
+        {
+          "id": "intro",
+          "title": "Введение",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_2",
+              "title": "Актуальность исследования",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_3",
+              "title": "Цель исследования",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_4",
+              "title": "Объект исследования",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_5",
+              "title": "Предмет исследования",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_6",
+              "title": "Задачи исследования",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_7",
+              "title": "Методы исследования",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_8",
+              "title": "Структура работы",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "conclusion",
+          "title": "Заключение",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_9",
+              "title": "Подведение итогов",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_10",
+              "title": "Выводы",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "references",
+          "title": "Список литературы",
+          "type": "section",
+          "children": []
+        }
+      ]
+    },
+    "required": [
+      "titlePage",
+      "tableOfContents",
+      "introduction",
+      "conclusion",
+      "references"
+    ]
+}

@@ -3,7 +3,10 @@ import sys
 # Предотвращение создания файлов кэша
 sys.dont_write_bytecode = True
 
+import json
 import os
+import tempfile
+import shutil
 import eel # Эта библиотека требует установки: pip install eel
 import asyncio # Эта библиотека требует установки: pip install asyncio
 import threading
@@ -30,6 +33,29 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     
     return os.path.join(base_path, relative_path)
+
+# Глобальная переменная для хранения пути к директории структур
+STRUCTURES_DIR = None
+
+def initialize_structures_directory():
+    global STRUCTURES_DIR
+    # Создаем временную директорию для хранения структур
+    STRUCTURES_DIR = os.path.join(tempfile.gettempdir(), 'pixelpen_structures')
+    
+    # Проверяем, существует ли уже директория
+    if not os.path.exists(STRUCTURES_DIR):
+        os.makedirs(STRUCTURES_DIR)
+        # Если директория только что создана, копируем стандартные структуры
+        copy_default_structures()
+
+def copy_default_structures():
+    default_structures_dir = os.path.join(os.path.dirname(__file__), 'default_structures')
+    if os.path.exists(default_structures_dir):
+        for filename in os.listdir(default_structures_dir):
+            if filename.endswith('.json'):
+                src = os.path.join(default_structures_dir, filename)
+                dst = os.path.join(STRUCTURES_DIR, filename)
+                shutil.copy2(src, dst)
 
 # Инициализация Eel
 eel.init('web')
@@ -164,6 +190,51 @@ def delete_configuration():
         show_notification("Не удалось удалить конфигурацию.", "error", 5000)
         return False
 
+''' работа со стурктурой документа начало'''
+
+@eel.expose
+def save_document_structure(document_type, structure):
+    try:
+        # Убедимся, что директория инициализирована
+        if STRUCTURES_DIR is None:
+            initialize_structures_directory()
+        
+        # Преобразуем структуру в JSON с сохранением Unicode символов
+        structure_json = json.dumps(structure, ensure_ascii=False, indent=2)
+        
+        # Сохраняем структуру в файл
+        file_path = os.path.join(STRUCTURES_DIR, f'{document_type}.json')
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(structure_json)
+        
+        return {"success": True, "message": "Структура документа успешно сохранена"}
+    except Exception as e:
+        return {"success": False, "message": f"Ошибка при сохранении структуры: {str(e)}"}
+
+@eel.expose
+def load_document_structure(document_type):
+    try:
+        # Убедимся, что директория инициализирована
+        if STRUCTURES_DIR is None:
+            initialize_structures_directory()
+        
+        # Загружаем структуру из файла
+        file_path = os.path.join(STRUCTURES_DIR, f'{document_type}.json')
+        with open(file_path, 'r', encoding='utf-8') as f:
+            structure_json = f.read()
+        
+        # Преобразуем JSON в объект Python
+        structure = json.loads(structure_json)
+        
+        return {"success": True, "structure": structure}
+    except FileNotFoundError:
+        return {"success": False, "message": "Структура для данного типа документа не найдена"}
+    except Exception as e:
+        return {"success": False, "message": f"Ошибка при загрузке структуры: {str(e)}"}
+
+
+''' работа со стурктурой документа конец '''
+
 @eel.expose
 def close_application():
     """
@@ -198,6 +269,9 @@ if __name__ == '__main__':
         
         # Применяем тему при запуске
         eel.applyTheme(config.get_theme())()
+
+        # Вызываем инициализацию при запуске приложения
+        initialize_structures_directory()
         
         # Основной цикл приложения
         while not close_event.is_set():

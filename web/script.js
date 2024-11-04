@@ -527,27 +527,95 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+class DocumentNode {
+    constructor(id, title, type = 'section', children = []) {
+        this.id = id;
+        this.title = title;
+        this.type = type;
+        this.children = children;
+    }
+}
+
 // Предустановленные пресеты для разных типов документов
+// const documentPresets = {
+//     report: {
+//         sections: ['Основная часть'],
+//         required: ['titlePage', 'tableOfContents', 'introduction', 'conclusion', 'references']
+//     },
+//     presentation: {
+//         sections: ['Основные положения', 'Аргументация'],
+//         required: ['titlePage', 'introduction', 'conclusion']
+//     },
+//     coursework: {
+//         sections: ['Теоретическая часть', 'Практическая часть', 'Анализ результатов'],
+//         required: ['titlePage', 'tableOfContents', 'introduction', 'conclusion', 'references']
+//     },
+//     project: {
+//         sections: ['Описание проекта', 'Планирование', 'Реализация', 'Оценка результатов'],
+//         required: ['titlePage', 'tableOfContents', 'introduction', 'conclusion']
+//     },
+//     custom: {
+//         sections: ['Раздел 1'],
+//         required: ['titlePage']
+//     }
+// };
 const documentPresets = {
     report: {
-        sections: ['Основная часть'],
+        structure: new DocumentNode('root', 'Реферат', 'root', [
+            new DocumentNode('intro', 'Введение', 'section'),
+            new DocumentNode('main', 'Основная часть', 'section', [
+                new DocumentNode('chapter1', 'Глава 1', 'subsection'),
+                new DocumentNode('chapter2', 'Глава 2', 'subsection')
+            ]),
+            new DocumentNode('conclusion', 'Заключение', 'section')
+        ]),
         required: ['titlePage', 'tableOfContents', 'introduction', 'conclusion', 'references']
     },
     presentation: {
         sections: ['Основные положения', 'Аргументация'],
+        structure: new DocumentNode('root', 'Доклад', 'root', [
+            new DocumentNode('main', 'Основные положения', 'section', [
+                new DocumentNode('chapter1', 'Глава 1', 'subsection'),
+                new DocumentNode('chapter2', 'Глава 2', 'subsection'),
+                new DocumentNode('chapter3', 'Глава 3', 'subsection')
+            ]),
+            new DocumentNode('conclusion', 'Аргументация', 'section')
+        ]),
         required: ['titlePage', 'introduction', 'conclusion']
     },
     coursework: {
-        sections: ['Теоретическая часть', 'Практическая часть', 'Анализ результатов'],
+        structure: new DocumentNode('root', 'Курсовая работа', 'root', [
+            new DocumentNode('titlePage', 'Титульный лист', 'section'),
+            new DocumentNode('intro', 'Введение', 'section'),
+            new DocumentNode('theoreticalPart', 'Теоретическая часть', 'section', [
+                new DocumentNode('subsection1', 'Подраздел 1', 'subsection'),
+                new DocumentNode('subsection2', 'Подраздел 2', 'subsection')
+            ]),
+            new DocumentNode('practicalPart', 'Практическая часть', 'section'),
+            new DocumentNode('conclusion', 'Заключение', 'section'),
+            new DocumentNode('references', 'Список литературы', 'section')
+        ]),
         required: ['titlePage', 'tableOfContents', 'introduction', 'conclusion', 'references']
     },
     project: {
-        sections: ['Описание проекта', 'Планирование', 'Реализация', 'Оценка результатов'],
-        required: ['titlePage', 'tableOfContents', 'introduction', 'conclusion']
+        structure: new DocumentNode('root', 'Проект', 'root', [
+            new DocumentNode('titlePage', 'Титульный лист', 'section'),
+            new DocumentNode('introduction', 'Введение', 'section'),
+            new DocumentNode('description', 'Описание проекта', 'section'),
+            new DocumentNode('planning', 'Планирование', 'section'),
+            new DocumentNode('implementation', 'Реализация', 'section'),
+            new DocumentNode('evaluation', 'Оценка результатов', 'section'),
+            new DocumentNode('conclusion', 'Заключение', 'section'),
+            new DocumentNode('references', 'Список литературы', 'section')
+        ]),
+        required: ['titlePage', 'introduction', 'conclusion', 'references']
     },
     custom: {
-        sections: ['Раздел 1'],
-        required: ['titlePage']
+        structure: new DocumentNode('root', 'Свой документ', 'root', [
+            new DocumentNode('section1', 'Раздел 1', 'section'),
+            new DocumentNode('section2', 'Раздел 2', 'section')
+        ]),
+        required: ['titlePage'] // Здесь вы можете настроить необходимые элементы
     }
 };
 
@@ -555,18 +623,8 @@ function updatePresetFields() {
     const documentType = document.getElementById('documentType').value;
     const preset = documentPresets[documentType];
 
-    // Обновляем чекбоксы
-    for (const checkbox of document.querySelectorAll('.checkbox-group input[type="checkbox"]')) {
-        const id = checkbox.id;
-        checkbox.checked = preset.required.includes(id);
-    }
-
-    // Обновляем разделы
-    const mainSections = document.getElementById('mainSections');
-    mainSections.innerHTML = '';
-    preset.sections.forEach(section => {
-        addSection(section);
-    });
+    // Загрузка структуры документа
+    loadDocumentStructure(documentType);
 }
 
 function addSection(sectionName = '') {
@@ -660,22 +718,6 @@ async function exportDocument() {
     }
 }
 
-function editStructure() {
-    const editor = document.getElementById('structureEditor');
-    const overlay = document.getElementById('structureEditorOverlay');
-    const documentType = document.getElementById('documentType').value;
-    
-    // Получаем текущую структуру
-    const currentStructure = documentPresets[documentType];
-    
-    // Заполняем редактор текущими данными
-    populateEditor(currentStructure);
-    
-    // Показываем редактор
-    editor.classList.add('active');
-    overlay.classList.add('active');
-}
-
 function populateEditor(structure) {
     const sectionList = document.querySelector('.section-list');
     sectionList.innerHTML = '';
@@ -704,29 +746,6 @@ function addNewSection() {
     sectionList.appendChild(newSection);
 }
 
-function saveStructure() {
-    const documentType = document.getElementById('documentType').value;
-    const sections = Array.from(document.querySelectorAll('.section-input'))
-                        .map(input => input.value);
-    
-    // Обновляем пресет
-    documentPresets[documentType].sections = sections;
-    
-    // Обновляем отображение на основной странице
-    updatePresetFields();
-    
-    closeEditor();
-    showAlert('Структура документа сохранена', 'success');
-}
-
-function closeEditor() {
-    const editor = document.getElementById('structureEditor');
-    const overlay = document.getElementById('structureEditorOverlay');
-    
-    editor.classList.remove('active');
-    overlay.classList.remove('active');
-}
-
 function removeSection(index) {
     const sections = document.querySelectorAll('.section-item');
     if (sections[index]) {
@@ -752,20 +771,11 @@ function moveSectionDown(index) {
     }
 }
 
-class DocumentNode {
-    constructor(id, title, type = 'section', children = []) {
-        this.id = id;
-        this.title = title;
-        this.type = type;
-        this.children = children;
-    }
-}
-
 let documentStructure = null;
 let selectedNode = null;
 
 function initializeTree() {
-    documentStructure = new DocumentNode('root', 'Документ', 'root');
+    documentStructure = new DocumentNode('root', 'Документ', 'root', []);
     renderTree();
 }
 
@@ -807,6 +817,26 @@ function renderNode(node, container) {
 
     container.appendChild(nodeElement);
 
+    if (node.type === 'characteristics' || node.type === 'text' || node.type === 'select') {
+        const input = document.createElement(node.type === 'select' ? 'select' : 'input');
+        input.type = node.type === 'text' ? 'text' : undefined;
+        input.value = node.value || '';
+        input.onchange = (e) => {
+            node.value = e.target.value;
+        };
+        
+        if (node.type === 'select' && node.options) {
+            node.options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                input.appendChild(optionElement);
+            });
+        }
+        
+        nodeElement.appendChild(input);
+    }
+
     if (node.children.length > 0) {
         const childrenContainer = document.createElement('div');
         childrenContainer.className = 'tree-node-children';
@@ -833,12 +863,16 @@ function selectNode(node) {
 function updateNodeEditor() {
     const titleInput = document.getElementById('nodeTitle');
     const typeSelect = document.getElementById('nodeType');
+    const valueInput = document.getElementById('nodeValue');
 
     if (selectedNode) {
         titleInput.value = selectedNode.title;
         typeSelect.value = selectedNode.type;
+        valueInput.value = selectedNode.value || '';
         titleInput.disabled = false;
         typeSelect.disabled = false;
+        valueInput.disabled = false;
+        valueInput.style.display = (selectedNode.type === 'text' || selectedNode.type === 'select') ? 'block' : 'none';
     } else {
         titleInput.value = '';
         typeSelect.value = 'section';
@@ -901,26 +935,28 @@ function updateNodeTitle() {
 function updateNodeType() {
     if (selectedNode) {
         const newType = document.getElementById('nodeType').value;
-        if (newType !== selectedNode.type) {
-            selectedNode.type = newType;
-            if (newType === 'section') {
-                // Если изменяем подраздел на раздел, перемещаем его дочерние элементы
-                const parent = findParentNode(documentStructure, selectedNode.id);
-                if (parent) {
-                    const index = parent.children.indexOf(selectedNode);
-                    parent.children.splice(index + 1, 0, ...selectedNode.children);
-                    selectedNode.children = [];
-                }
-            }
-            renderTree();
-            selectNode(selectedNode);
-        }
+        selectedNode.type = newType;
+        renderTree();
     }
 }
 
 function saveStructure() {
-    // Здесь можно добавить логику сохранения структуры
-    console.log('Сохранение структуры:', documentStructure);
+    const documentType = document.getElementById('documentType').value;
+
+    const structure = {
+        type: documentType,
+        structure: documentStructure,
+        required: documentPresets[documentType].required
+    };
+
+    eel.save_document_structure(documentType, structure)().then(result => {
+        if (result.success) {
+            showAlert('Структура документа сохранена', 'success');
+        } else {
+            showAlert(result.message, 'error');
+        }
+    });
+
     closeEditor();
 }
 
@@ -932,6 +968,7 @@ function closeEditor() {
 // Инициализация дерева при открытии редактора
 function openStructureEditor() {
     initializeTree();
+    loadDocumentStructure(document.getElementById('documentType').value);
     document.getElementById('structureEditor').classList.add('active');
     document.getElementById('structureEditorOverlay').classList.add('active');
 }
@@ -943,3 +980,59 @@ document.addEventListener('DOMContentLoaded', function() {
         editButton.addEventListener('click', openStructureEditor);
     }
 });
+
+function exportStructure() {
+    const documentType = document.getElementById('documentType').value;
+    eel.load_document_structure(documentType)().then(result => {
+        if (result.success) {
+            const blob = new Blob([JSON.stringify(result.structure, null, 2)], {type: 'application/json'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${documentType}_structure.json`;
+            a.click();
+        } else {
+            showAlert('Ошибка при экспорте структуры', 'error');
+        }
+    });
+}
+
+function importStructure(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        try {
+            const importedStructure = JSON.parse(e.target.result);
+            const documentType = importedStructure.type;
+
+            eel.save_document_structure(documentType, importedStructure)().then(result => {
+                if (result.success) {
+                    document.getElementById('documentType').value = documentType;
+                    updatePresetFields();
+                    showAlert('Структура документа успешно импортирована', 'success');
+                } else {
+                    showAlert(result.message, 'error');
+                }
+            });
+        } catch (error) {
+            showAlert('Ошибка при импорте структуры', 'error');
+        }
+    };
+
+    reader.readAsText(file);
+}
+
+function loadDocumentStructure(documentType) {
+    eel.load_document_structure(documentType)().then(result => {
+        if (result.success) {
+            documentStructure = result.structure.structure;
+            documentPresets[documentType].required = result.structure.required;
+            renderTree();
+        } else {
+            // Если структура не найдена, используем базовую
+            initializeTree();
+        }
+    });
+}
+
+document.getElementById('documentType').addEventListener('change', updatePresetFields);

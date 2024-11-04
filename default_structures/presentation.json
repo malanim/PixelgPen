@@ -1,0 +1,110 @@
+{
+    "type": "presentation",
+    "structure": {
+      "id": "root",
+      "title": "Доклад",
+      "type": "root",
+      "children": [
+        {
+          "id": "titleSlide",
+          "title": "Титульный слайд",
+          "type": "section",
+          "children": []
+        },
+        {
+          "id": "intro",
+          "title": "Введение",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_1",
+              "title": "Актуальность темы",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_2",
+              "title": "Цель доклада",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "mainPart",
+          "title": "Основная часть",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_3",
+              "title": "Ключевые положения",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_4",
+              "title": "Аргументация",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_5",
+              "title": "Примеры и иллюстрации",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "results",
+          "title": "Результаты",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_6",
+              "title": "Основные выводы",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_7",
+              "title": "Практическая значимость",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "conclusion",
+          "title": "Заключение",
+          "type": "section",
+          "children": [
+            {
+              "id": "node_8",
+              "title": "Итоги",
+              "type": "subsection",
+              "children": []
+            },
+            {
+              "id": "node_9",
+              "title": "Перспективы",
+              "type": "subsection",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "references",
+          "title": "Источники",
+          "type": "section",
+          "children": []
+        }
+      ]
+    },
+    "required": [
+      "titleSlide",
+      "introduction",
+      "conclusion",
+      "references"
+    ]
+}
