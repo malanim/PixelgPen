@@ -63,17 +63,16 @@
                                         <label>Название:
                                             <input type="text" id="nodeTitle" onchange="updateNodeTitle()">
                                         </label>
-                                        <label>Тип:
+                                        <!-- <label>Тип:
                                             <select id="nodeType" onchange="updateNodeType()">
                                                 <option value="section">Раздел</option>
                                                 <option value="subsection">Подраздел</option>
                                             </select>
-                                        </label>
+                                        </label> -->
                                     </div>
                                 </div>
                                 <div class="tree-controls">
-                                    <button onclick="addNode('section')">Добавить раздел</button>
-                                    <button onclick="addNode('subsection')">Добавить подраздел</button>
+                                    <button onclick="addNode()">Добавить элемент</button>
                                     <button onclick="deleteSelectedNode()">Удалить выбранный</button>
                                 </div>
                                 <div class="editor-buttons">

@@ -960,30 +960,128 @@ function updateNodeEditor() {
     }
 }
 
-function addNode(type) {
+function addNode() {
     const newId = 'node_' + Date.now();
-    const newNode = new DocumentNode(newId, `Новый ${type}`, type);
-    
+    let newNode;
+    let parent;
+
     if (!selectedNode) {
+        // Если нет выбранного узла, добавляем section в корень
+        newNode = new DocumentNode(newId, 'Новый раздел', 'section');
         documentStructure.children.push(newNode);
-    } else if (type === 'subsection' && selectedNode.type === 'section') {
-        selectedNode.children.push(newNode);
     } else {
-        const parent = findParentNode(documentStructure, selectedNode.id);
-        if (parent) {
-            const index = parent.children.indexOf(selectedNode);
-            parent.children.splice(index + 1, 0, newNode);
-        } else {
-            documentStructure.children.push(newNode);
-        }
+        // Определяем уровень вложенности
+        const level = getNodeLevel(documentStructure, selectedNode.id);
+        
+        // Спрашиваем пользователя, куда добавить новый элемент
+        showAddNodeDialog(level).then(position => {
+            switch(position) {
+                case 'inside':
+                    // Добавляем внутрь выбранного узла
+                    newNode = new DocumentNode(
+                        newId, 
+                        'Новый элемент', 
+                        level === 0 ? 'subsection' : 'subsection'
+                    );
+                    selectedNode.children.push(newNode);
+                    break;
+
+                case 'after':
+                    // Добавляем после выбранного узла на том же уровне
+                    parent = findParentNode(documentStructure, selectedNode.id);
+                    if (parent) {
+                        newNode = new DocumentNode(
+                            newId, 
+                            'Новый элемент', 
+                            level === 1 ? 'section' : 'subsection'
+                        );
+                        const index = parent.children.indexOf(selectedNode);
+                        parent.children.splice(index + 1, 0, newNode);
+                    }
+                    break;
+
+                case 'before':
+                    // Добавляем перед выбранным узлом на том же уровне
+                    parent = findParentNode(documentStructure, selectedNode.id);
+                    if (parent) {
+                        newNode = new DocumentNode(
+                            newId, 
+                            'Новый элемент', 
+                            level === 1 ? 'section' : 'subsection'
+                        );
+                        const index = parent.children.indexOf(selectedNode);
+                        parent.children.splice(index, 0, newNode);
+                    }
+                    break;
+            }
+
+            if (newNode) {
+                renderTree();
+                selectNode(newNode);
+            }
+        });
+    }
+}
+
+// Функция для определения уровня вложенности узла
+function getNodeLevel(root, nodeId, level = 0) {
+    if (root.id === nodeId) return level;
+    
+    for (const child of root.children) {
+        const foundLevel = getNodeLevel(child, nodeId, level + 1);
+        if (foundLevel !== -1) return foundLevel;
     }
     
-    renderTree();
-    selectNode(newNode);
+    return -1;
+}
+
+// Функция для отображения диалога выбора позиции нового узла
+function showAddNodeDialog(level) {
+    return new Promise((resolve) => {
+        const dialog = document.createElement('div');
+        dialog.className = 'add-node-dialog';
+        
+        dialog.innerHTML = `
+            <div class="dialog-content">
+                <h3>Добавить элемент</h3>
+                <button onclick="this.closest('.add-node-dialog').dataset.position='inside'">
+                    Внутрь выбранного элемента
+                </button>
+                <button onclick="this.closest('.add-node-dialog').dataset.position='before'">
+                    Перед выбранным элементом
+                </button>
+                <button onclick="this.closest('.add-node-dialog').dataset.position='after'">
+                    После выбранного элемента
+                </button>
+                <button onclick="this.closest('.add-node-dialog').remove()">
+                    Отмена
+                </button>
+            </div>
+        `;
+
+        dialog.addEventListener('click', (e) => {
+            const position = dialog.dataset.position;
+            if (position) {
+                dialog.remove();
+                resolve(position);
+            }
+        });
+
+        document.body.appendChild(dialog);
+    });
 }
 
 function deleteSelectedNode() {
     if (!selectedNode) return;
+    
+    // Запрещаем удаление корневого узла
+    if (selectedNode.id === 'root') return;
+    
+    // Если у section есть подразделы, запрещаем удаление
+    if (selectedNode.type === 'section' && selectedNode.children.length > 0) {
+        showAlert('Нельзя удалить раздел, содержащий подразделы', 'error');
+        return;
+    }
 
     const parent = findParentNode(documentStructure, selectedNode.id);
     if (parent) {
@@ -1011,13 +1109,13 @@ function updateNodeTitle() {
     }
 }
 
-function updateNodeType() {
-    if (selectedNode) {
-        const newType = document.getElementById('nodeType').value;
-        selectedNode.type = newType;
-        renderTree();
-    }
-}
+// function updateNodeType() {
+//     if (selectedNode) {
+//         const newType = document.getElementById('nodeType').value;
+//         selectedNode.type = newType;
+//         renderTree();
+//     }
+// }
 
 function saveStructure() {
     const documentType = document.getElementById('documentType').value;
