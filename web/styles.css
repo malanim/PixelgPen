@@ -766,6 +766,14 @@ hr {
     overflow: hidden;
 }
 
+.document-tree {
+    height: 100%;
+    overflow-y: auto;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    padding: 10px;
+}
+
 .node-editor {
     background-color: var(--secondary-bg);
     border-radius: 4px;
@@ -817,35 +825,36 @@ hr {
 
 /* Стили для дерева документа */
 .document-tree {
-    font-family: 'Courier New', Courier, monospace; /* Моноширинный шрифт */
-    font-size: 14px; /* Можете настроить размер по вашему усмотрению */
-    line-height: 1.5; /* Обеспечивает хорошее вертикальное расстояние между строками */
-    white-space: pre;
-    overflow-x: auto; /* Добавляем горизонтальную прокрутку, если содержимое не помещается */
+    height: 100%;
+    overflow-y: auto;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    padding: 10px;
+    font-family: Arial, sans-serif;
 }
 
 /* Базовые стили для узлов дерева */
 .tree-node {
-    font-family: inherit; /* Наследует шрифт от родителя (.document-tree) */
-    white-space: pre;
-    margin: 0; /* Убираем отступы, чтобы линии соединялись правильно */
+    padding: 5px 0;
+    margin: 2px 0;
     cursor: pointer;
-    padding: 2px 0;
+    display: flex;
+    align-items: center;
 }
 
 /* Контейнер для дочерних элементов */
 .tree-children {
-    margin-left: 0;
-}
-
-.tree-children::before {
-    display: none; /* Убираем вертикальную линию, так как теперь она часть префикса */
+    margin-left: 20px;
+    border-left: 1px dashed var(--input-border);
+    padding-left: 10px;
 }
 
 /* Стили для выбранного узла */
 .tree-node.selected {
     background-color: var(--accent-color);
-    color: var(--button-text);
+    color: var(--text-color-inverse);
+    border-radius: 4px;
+    padding: 5px 10px;
 }
 
 /* Стили для иконок разворачивания/сворачивания */
@@ -911,17 +920,4 @@ hr {
 
 .tree-node.drag-over {
     border-top: 2px solid var(--accent-color);
-}
-
-.tree-node-content {
-    display: inline; /* Меняем на inline для лучшего выравнивания */
-}
-
-
-.tree-node-prefix {
-    color: var(--secondary-text);
-}
-
-.tree-node-title {
-    margin-left: 4px; /* Небольшой отступ от префикса */
 }

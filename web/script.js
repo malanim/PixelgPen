@@ -782,14 +782,12 @@ function initializeTree() {
 function renderTree() {
     const treeContainer = document.getElementById('documentTree');
     treeContainer.innerHTML = '';
-    documentStructure.children.forEach((child, index, array) => 
-        renderNode(child, treeContainer, '', index === array.length - 1));
+    renderNode(documentStructure, treeContainer);
 }
 
-function renderNode(node, container, prefix = '') {
+function renderNode(node, container) {
     if (node.type === 'root') {
-        node.children.forEach((child, index, array) => 
-            renderNode(child, container, '', index === array.length - 1));
+        node.children.forEach(child => renderNode(child, container));
         return;
     }
 
@@ -797,20 +795,19 @@ function renderNode(node, container, prefix = '') {
     nodeElement.className = `tree-node ${node.type}`;
     nodeElement.setAttribute('data-node-id', node.id);
 
-    const nodeContent = document.createElement('span');
+    const nodeContent = document.createElement('div');
     nodeContent.className = 'tree-node-content';
+    
+    const icon = document.createElement('span');
+    icon.className = 'tree-node-icon';
+    icon.innerHTML = node.type === 'section' ? '📄' : '📝';
 
-    // Создаем ASCII-префикс
-    const prefixSpan = document.createElement('span');
-    prefixSpan.className = 'tree-node-prefix';
-    prefixSpan.textContent = prefix;
+    const title = document.createElement('span');
+    title.className = 'tree-node-title';
+    title.textContent = node.title;
 
-    const titleSpan = document.createElement('span');
-    titleSpan.className = 'tree-node-title';
-    titleSpan.textContent = (node.type === 'section' ? '📂 ' : '📄 ') + node.title;
-
-    nodeContent.appendChild(prefixSpan);
-    nodeContent.appendChild(titleSpan);
+    nodeContent.appendChild(icon);
+    nodeContent.appendChild(title);
     nodeElement.appendChild(nodeContent);
 
     nodeElement.onclick = (e) => {
@@ -820,25 +817,32 @@ function renderNode(node, container, prefix = '') {
 
     container.appendChild(nodeElement);
 
-    if (node.children && node.children.length > 0) {
-        const childPrefix = prefix + (node.isLastChild ? '    ' : '│   ');
-        node.children.forEach((child, index, array) => {
-            child.isLastChild = index === array.length - 1;
-            const childLinePrefix = child.isLastChild ? '└── ' : '├── ';
-            renderNode(child, container, childPrefix + childLinePrefix);
-        });
+    if (node.type === 'characteristics' || node.type === 'text' || node.type === 'select') {
+        const input = document.createElement(node.type === 'select' ? 'select' : 'input');
+        input.type = node.type === 'text' ? 'text' : undefined;
+        input.value = node.value || '';
+        input.onchange = (e) => {
+            node.value = e.target.value;
+        };
+        
+        if (node.type === 'select' && node.options) {
+            node.options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                input.appendChild(optionElement);
+            });
+        }
+        
+        nodeElement.appendChild(input);
     }
-}
 
-// Вспомогательная функция для определения уровня вложенности узла
-function getNodeLevel(node) {
-    let level = 0;
-    let current = node;
-    while (current.parent) {
-        level++;
-        current = current.parent;
+    if (node.children.length > 0) {
+        const childrenContainer = document.createElement('div');
+        childrenContainer.className = 'tree-node-children';
+        node.children.forEach(child => renderNode(child, childrenContainer));
+        nodeElement.appendChild(childrenContainer);
     }
-    return level;
 }
 
 function selectNode(node) {
