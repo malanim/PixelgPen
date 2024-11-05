@@ -785,46 +785,106 @@ function renderTree() {
     renderNode(documentStructure, treeContainer);
 }
 
-function renderNode(node, container) {
+function renderNode(node, container, level = 0) {
+    // Пропускаем рендеринг корневого узла
     if (node.type === 'root') {
-        node.children.forEach(child => renderNode(child, container));
+        node.children.forEach(child => renderNode(child, container, level));
         return;
     }
 
+    // Создаем элемент узла
     const nodeElement = document.createElement('div');
     nodeElement.className = `tree-node ${node.type}`;
     nodeElement.setAttribute('data-node-id', node.id);
+    nodeElement.setAttribute('data-level', level);
 
+    // Создаем контейнер для содержимого узла
     const nodeContent = document.createElement('div');
     nodeContent.className = 'tree-node-content';
-    
+
+    // Добавляем отступ в зависимости от уровня вложенности
+    nodeContent.style.paddingLeft = `${level * 20}px`;
+
+    // Функция для преобразования уровня в римские цифры
+    function toRoman(num) {
+        const romanNumerals = {
+            1: 'I',
+            2: 'II',
+            3: 'III',
+            4: 'IV',
+            5: 'V',
+            // добавьте больше, если нужно
+        };
+        return romanNumerals[num] || '';
+    }
+
+    // Создаем индикатор уровня
+    const levelIndicator = document.createElement('div');
+    levelIndicator.className = 'level-indicator';
+    // Устанавливаем текст индикатора как римскую цифру
+    levelIndicator.textContent = toRoman(level);
+
+    // // Создаем индикатор уровня
+    // const levelIndicator = document.createElement('div');
+    // levelIndicator.className = 'level-indicator';
+    // // Меняем цвет индикатора в зависимости от уровня
+    // levelIndicator.style.backgroundColor = `var(--level-${level}-color, var(--accent-color))`;
+
+    // Создаем контейнер для иконок и кнопок
+    const controlsContainer = document.createElement('div');
+    controlsContainer.className = 'node-controls';
+
+    // Добавляем кнопку сворачивания/разворачивания для узлов с дочерними элементами
+    if (node.children && node.children.length > 0) {
+        const toggleButton = document.createElement('button');
+        toggleButton.className = 'toggle-button';
+        toggleButton.innerHTML = '▼';
+        toggleButton.onclick = (e) => {
+            e.stopPropagation();
+            const childrenContainer = nodeElement.querySelector('.tree-node-children');
+            const isCollapsed = toggleButton.innerHTML === '▶';
+            
+            toggleButton.innerHTML = isCollapsed ? '▼' : '▶';
+            childrenContainer.style.display = isCollapsed ? 'block' : 'none';
+            nodeElement.classList.toggle('collapsed', !isCollapsed);
+        };
+        controlsContainer.appendChild(toggleButton);
+    }
+
+    // Добавляем иконку в зависимости от типа узла
     const icon = document.createElement('span');
     icon.className = 'tree-node-icon';
-    icon.innerHTML = node.type === 'section' ? '📄' : '📝';
+    // Выбираем иконку в зависимости от типа и уровня
+    if (node.type === 'section') {
+        icon.innerHTML = level === 0 ? '📑' : '📋';
+    } else if (node.type === 'subsection') {
+        icon.innerHTML = '📄';
+    } else {
+        icon.innerHTML = '📝';
+    }
+    controlsContainer.appendChild(icon);
 
+    // Создаем контейнер для заголовка
+    const titleContainer = document.createElement('div');
+    titleContainer.className = 'title-container';
+
+    // Добавляем заголовок
     const title = document.createElement('span');
     title.className = 'tree-node-title';
     title.textContent = node.title;
+    titleContainer.appendChild(title);
 
-    nodeContent.appendChild(icon);
-    nodeContent.appendChild(title);
-    nodeElement.appendChild(nodeContent);
-
-    nodeElement.onclick = (e) => {
-        e.stopPropagation();
-        selectNode(node);
-    };
-
-    container.appendChild(nodeElement);
-
+    // Если узел имеет значение, добавляем поле ввода
     if (node.type === 'characteristics' || node.type === 'text' || node.type === 'select') {
         const input = document.createElement(node.type === 'select' ? 'select' : 'input');
+        input.className = 'node-input';
         input.type = node.type === 'text' ? 'text' : undefined;
         input.value = node.value || '';
         input.onchange = (e) => {
+            e.stopPropagation();
             node.value = e.target.value;
         };
-        
+
         if (node.type === 'select' && node.options) {
             node.options.forEach(option => {
                 const optionElement = document.createElement('option');
@@ -833,16 +893,35 @@ function renderNode(node, container) {
                 input.appendChild(optionElement);
             });
         }
-        
-        nodeElement.appendChild(input);
+        titleContainer.appendChild(input);
     }
 
-    if (node.children.length > 0) {
+    // Собираем все элементы вместе
+    nodeContent.appendChild(levelIndicator);
+    nodeContent.appendChild(controlsContainer);
+    nodeContent.appendChild(titleContainer);
+    nodeElement.appendChild(nodeContent);
+
+    // Добавляем обработчик клика для выбора узла
+    nodeElement.onclick = (e) => {
+        e.stopPropagation();
+        selectNode(node);
+    };
+
+    // Добавляем контейнер для дочерних элементов
+    if (node.children && node.children.length > 0) {
         const childrenContainer = document.createElement('div');
         childrenContainer.className = 'tree-node-children';
-        node.children.forEach(child => renderNode(child, childrenContainer));
+        // Рекурсивно рендерим дочерние элементы
+        node.children.forEach(child => renderNode(child, childrenContainer, level + 1));
         nodeElement.appendChild(childrenContainer);
     }
+
+    // Добавляем узел в контейнер
+    container.appendChild(nodeElement);
+
+    // Добавляем всплывающие подсказки
+    nodeElement.title = `Тип: ${node.type}\nУровень: ${level}`;
 }
 
 function selectNode(node) {

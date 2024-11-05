@@ -12,6 +12,9 @@
             openMenu();
         });
     </script>
+
+    <!-- Зависимости -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Кастомные алерт сообщения -->
@@ -51,6 +54,7 @@
 
                     <div id="structureEditorOverlay" class="structure-editor-overlay"></div>
                     <div id="structureEditor" class="structure-editor">
+                        <div class="close-button" onclick="closeEditor()">✕</div>
                         <h2>Редактирование структуры</h2>
                         <div class="editor-content">
                             <div class="editor-left-panel">

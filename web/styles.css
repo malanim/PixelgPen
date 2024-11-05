@@ -12,6 +12,7 @@
     --notification-bg: #ffffff;
     --notification-text: #333333;
     --notification-border: #e0e0e0;
+    --hover-bg: rgba(0, 0, 0, 0.05);
 }
 
 /* Темная тема */
@@ -28,6 +29,7 @@
     --notification-bg: #424242;
     --notification-text: #ffffff;
     --notification-border: #616161;
+    --hover-bg: rgba(255, 255, 255, 0.1);
 }
 
 /* Теплая тема */
@@ -44,6 +46,7 @@
     --notification-bg: #fff5eb;
     --notification-text: #8b4513;
     --notification-border: #ffe4c4;
+    --hover-bg: rgba(255, 127, 80, 0.1);
 }
 
 /* Холодная тема */
@@ -60,6 +63,7 @@
     --notification-bg: #e6f3ff;
     --notification-text: #00008b;
     --notification-border: #b0e0e6;
+    --hover-bg: rgba(30, 144, 255, 0.1);
 }
 
 /* Живая тема */
@@ -76,8 +80,8 @@
     --notification-bg: #e8f5e9;
     --notification-text: #1b5e20;
     --notification-border: #a5d6a7;
+    --hover-bg: rgba(76, 175, 80, 0.1);
 }
-
 /* Применение переменных к элементам */
 body {
     background-color: var(--primary-bg);
@@ -835,11 +839,9 @@ hr {
 
 /* Базовые стили для узлов дерева */
 .tree-node {
-    padding: 5px 0;
-    margin: 2px 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
+    position: relative;
+    margin: 5px 0;
+    transition: all 0.2s ease;
 }
 
 /* Контейнер для дочерних элементов */
@@ -920,4 +922,248 @@ hr {
 
 .tree-node.drag-over {
     border-top: 2px solid var(--accent-color);
+}
+
+.tree-node-children {
+    margin-left: 20px;
+    padding-left: 15px;
+    border-left: 1px solid var(--input-border);
+    position: relative;
+}
+
+.tree-node-children::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 15px;
+    height: 1px;
+    background-color: var(--input-border);
+}
+
+.tree-node-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    background-color: var(--secondary-bg);
+    border-radius: 4px;
+    border: 1px solid var(--input-border);
+    transition: all 0.2s ease;
+}
+
+/* Стили для наведения */
+.tree-node-content:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: var(--secondary-bg);
+}
+
+/* Обеспечиваем читаемость текста при наведении */
+.tree-node.selected > .tree-node-content:hover {
+    background-color: var(--accent-color);
+}
+
+.tree-node.selected > .tree-node-content:hover * {
+    color: var(--button-text);
+}
+
+/* .level-indicator {
+    width: 3px;
+    height: 24px;
+    border-radius: 2px;
+    flex-shrink: 0;
+} */
+
+.level-indicator {
+    font-family: 'Nunito', sans-serif; /* Используйте выбранный шрифт */
+    font-size: 1.5em; /* Увеличьте размер шрифта */
+    color: var(--accent-color); /* Используйте переменную для цвета, соответствующего теме */
+    /* Добавьте другие стили, если необходимо */
+}
+
+.node-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.toggle-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 5px;
+    color: var(--primary-text);
+    transition: transform 0.2s ease;
+}
+
+.toggle-button:hover {
+    transform: scale(1.2);
+}
+
+.tree-node-icon {
+    font-size: 1.2em;
+    opacity: 0.7;
+}
+
+.title-container {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tree-node-title {
+    font-weight: 500;
+    flex-grow: 1;
+}
+
+.node-input {
+    padding: 4px 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    color: var(--primary-text);
+}
+
+.tree-node-children {
+    margin-left: 20px;
+    padding-left: 15px;
+    border-left: 1px dashed var(--input-border);
+    position: relative;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+/* Базовые стили для контента узла */
+.tree-node-content {
+    background-color: var(--secondary-bg);
+    transition: background-color 0.3s ease;
+}
+
+.tree-node-content:hover {
+    background-color: var(--hover-bg);
+}
+
+/* Стили для выбранного узла */
+.tree-node.selected > .tree-node-content {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.tree-node.selected > .tree-node-content * {
+    color: var(--button-text);
+}
+
+/* Стили для дочерних элементов выбранного узла */
+.tree-node.selected .tree-node-children .tree-node-content {
+    background-color: var(--secondary-bg);
+}
+
+.tree-node.selected .tree-node-children .tree-node-content * {
+    color: var(--primary-text);
+}
+
+.tree-node.selected .tree-node-children .tree-node-content:hover {
+    background-color: var(--hover-bg);
+}
+
+/* Стили для свернутого состояния */
+.tree-node.collapsed > .tree-node-children {
+    display: none;
+    max-height: 0;
+    opacity: 0;
+}
+
+/* Декоративная линия для дочерних элементов */
+.tree-node-children::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -15px;
+    width: 15px;
+    height: 1px;
+    background-color: var(--input-border);
+}
+
+/* Стили для разных уровней вложенности */
+.tree-node[data-level="0"] > .tree-node-content {
+    font-weight: bold;
+}
+
+.tree-node[data-level="1"] > .tree-node-content {
+    font-style: italic;
+}
+
+/* Стили для всплывающих подсказок */
+.tree-node[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    background: var(--tooltip-bg);
+    color: var(--tooltip-text);
+    padding: 5px;
+    border-radius: 3px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1;
+    top: 100%;
+    left: 0;
+}
+
+/* Стили для перетаскивания */
+.tree-node.dragging {
+    opacity: 0.5;
+}
+
+.tree-node.drag-over > .tree-node-content {
+    border-top: 2px solid var(--accent-color);
+}
+
+/* Стили для мобильных устройств */
+@media (max-width: 768px) {
+    .tree-node-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .node-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .title-container {
+        width: 100%;
+        margin-top: 5px;
+    }
+}
+
+/* .level-color {
+    --level-1-color: #084b80;
+    --level-2-color: #006c9f;
+    --level-3-color: #006c9f;
+    --level-4-color: #02cee3;
+    --level-5-color: #bdf3ef;
+} */
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--primary-text);
+    background-color: transparent;
+    border: none;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.close-button:hover {
+    /* background-color: var(--hover-bg); */
+    transform: scale(1.1);
 }
