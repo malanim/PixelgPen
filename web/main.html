@@ -77,13 +77,17 @@
                                 </div>
                                 <div class="editor-buttons">
                                     <p>
-                                        <button onclick="saveStructure()">Сохранить</button>
-                                        <button onclick="closeEditor()">Закрыть</button>
+                                        <button id="undoButton" onclick="undoAction()" disabled>Отменить</button>
+                                        <button id="redoButton" onclick="redoAction()" disabled>Повторить</button>
                                     </p>
                                     <p>
                                         <button onclick="exportStructure()">Экспорт структуры</button>
                                         <input type="file" id="importStructure" style="display: none;" onchange="importStructure(event)">
                                         <button onclick="document.getElementById('importStructure').click()">Импорт структуры</button>
+                                    </p>
+                                    <p>
+                                        <button onclick="saveStructure()">Сохранить</button>
+                                        <button onclick="closeEditor()">Закрыть</button>
                                     </p>
                                 </div>
                             </div>

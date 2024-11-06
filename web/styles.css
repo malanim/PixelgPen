@@ -290,7 +290,7 @@ hr {
     position: fixed;
     top: 20px;
     right: 20px;
-    z-index: 1000;
+    z-index: 10000;
     pointer-events: none; /* Позволяет кликать сквозь контейнер */
     width: 300px; /* Фиксированная ширина контейнера */
 }
@@ -853,7 +853,7 @@ hr {
     position: relative;
     margin: 5px 0;
     transition: all 0.2s ease;
-    cursor: move;
+    /* cursor: move; */
 }
 
 /* Контейнер для дочерних элементов */
@@ -1321,4 +1321,14 @@ hr {
     overflow: auto;
     padding: 10px;
     height: 100%;
+}
+
+#undoButton, #redoButton {
+    padding: 5px 10px;
+    margin-right: 10px;
+}
+
+#undoButton:disabled, #redoButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

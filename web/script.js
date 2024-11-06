@@ -536,6 +536,106 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+class HistoryManager {
+    constructor() {
+        this.history = [];
+        this.currentIndex = -1;
+    }
+
+    push(state) {
+        try {
+            // Создаем глубокую копию состояния
+            const stateCopy = this.deepClone(state);
+            
+            // Удаляем все состояния после текущего индекса
+            this.history = this.history.slice(0, this.currentIndex + 1);
+            this.history.push(stateCopy);
+            this.currentIndex++;
+            
+            // Обновляем состояние кнопок
+            updateUndoRedoButtons();
+        } catch (error) {
+            console.error('Error pushing state to history:', error);
+        }
+    }
+
+    undo() {
+        if (this.canUndo()) {
+            this.currentIndex--;
+            return this.deepClone(this.history[this.currentIndex]);
+        }
+        return null;
+    }
+
+    redo() {
+        if (this.canRedo()) {
+            this.currentIndex++;
+            return this.deepClone(this.history[this.currentIndex]);
+        }
+        return null;
+    }
+
+    canUndo() {
+        return this.currentIndex > 0;
+    }
+
+    canRedo() {
+        return this.currentIndex < this.history.length - 1;
+    }
+
+    // Безопасное глубокое клонирование
+    deepClone(obj) {
+        try {
+            return JSON.parse(JSON.stringify(obj));
+        } catch (error) {
+            console.error('Error cloning state:', error);
+            return null;
+        }
+    }
+}
+
+// Обновленные функции для undo/redo
+function undoAction() {
+    const previousState = historyManager.undo();
+    if (previousState) {
+        try {
+            documentStructure = previousState;
+            renderTree();
+            selectNode(null); // Сбрасываем выбранный узел
+            updateUndoRedoButtons();
+        } catch (error) {
+            console.error('Error in undo action:', error);
+        }
+    }
+}
+
+function redoAction() {
+    const nextState = historyManager.redo();
+    if (nextState) {
+        try {
+            documentStructure = nextState;
+            renderTree();
+            selectNode(null); // Сбрасываем выбранный узел
+            updateUndoRedoButtons();
+        } catch (error) {
+            console.error('Error in redo action:', error);
+        }
+    }
+}
+
+// Обновление состояния кнопок
+function updateUndoRedoButtons() {
+    const undoButton = document.getElementById('undoButton');
+    const redoButton = document.getElementById('redoButton');
+    
+    if (undoButton && redoButton) {
+        undoButton.disabled = !historyManager.canUndo();
+        redoButton.disabled = !historyManager.canRedo();
+    }
+}
+
+let historyManager = new HistoryManager();
+
 class DocumentNode {
     constructor(id, title, type = 'section', children = []) {
         this.id = id;
@@ -792,6 +892,7 @@ function renderTree() {
     const treeContainer = document.getElementById('documentTree');
     treeContainer.innerHTML = '';
     renderNode(documentStructure, treeContainer);
+    updateUndoRedoButtons();
 }
 
 function renderNode(node, container, level = 0) {
@@ -1060,6 +1161,7 @@ function addNode() {
             }
 
             if (newNode) {
+                historyManager.push(documentStructure);
                 renderTree();
                 selectNode(newNode);
             }
@@ -1131,6 +1233,7 @@ function deleteSelectedNode() {
     if (parent) {
         parent.children = parent.children.filter(node => node.id !== selectedNode.id);
         selectedNode = null;
+        historyManager.push(documentStructure);
         renderTree();
         updateNodeEditor();
     }
@@ -1315,6 +1418,7 @@ function handleDrop(e) {
     const indicator = document.querySelector('.drop-indicator');
     if (indicator) indicator.remove();
 
+    historyManager.push(documentStructure);
     renderTree();
 }
 
@@ -1330,6 +1434,7 @@ function moveNode(draggedNodeId, dropTargetId) {
         dropTarget.children.push(draggedNode);
 
         // Перерисовываем дерево
+        historyManager.push(documentStructure);
         renderTree();
     }
 }
@@ -1412,7 +1517,7 @@ function saveStructure() {
         }
     });
 
-    closeEditor();
+    // closeEditor();
 }
 
 function closeEditor() {
@@ -1426,6 +1531,9 @@ function openStructureEditor() {
     loadDocumentStructure(document.getElementById('documentType').value);
     document.getElementById('structureEditor').classList.add('active');
     document.getElementById('structureEditorOverlay').classList.add('active');
+    historyManager = new HistoryManager(); // Создаем новый экземпляр
+    historyManager.push(documentStructure); // Добавляем начальное состояние
+    updateUndoRedoButtons();
 }
 
 // Добавляем обработчик для кнопки редактирования структуры
@@ -1491,3 +1599,17 @@ function loadDocumentStructure(documentType) {
 }
 
 document.getElementById('documentType').addEventListener('change', updatePresetFields);
+
+document.addEventListener('keydown', function(e) {
+    // Проверяем, открыт ли редактор структуры
+    const structureEditor = document.getElementById('structureEditor');
+    if (structureEditor && structureEditor.classList.contains('active')) {
+        if (e.ctrlKey && e.key === 'z') {
+            e.preventDefault();
+            undoAction();
+        } else if (e.ctrlKey && e.key === 'y') {
+            e.preventDefault();
+            redoAction();
+        }
+    }
+});
