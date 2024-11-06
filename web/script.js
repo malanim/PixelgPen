@@ -1192,35 +1192,101 @@ function handleDragStart(e) {
 function handleDragOver(e) {
     e.preventDefault();
     const targetNode = e.target.closest('.tree-node');
-    if (!targetNode) return;
+    const treeContainer = document.querySelector('.document-tree');
+
+    // Проверяем, что мы внутри контейнера дерева
+    if (!targetNode || !treeContainer.contains(targetNode)) {
+        document.querySelectorAll('.drop-indicator').forEach(el => el.remove());
+        return;
+    }
 
     const draggingNode = document.querySelector('.dragging');
     if (draggingNode === targetNode) return;
 
-    targetNode.classList.add('drag-over');
+    // Удаляем все предыдущие индикаторы
+    document.querySelectorAll('.drop-indicator').forEach(el => el.remove());
 
-    // Определяем позицию курсора относительно целевого элемента
+    // Получаем размеры и позицию целевого узла
     const rect = targetNode.getBoundingClientRect();
+    const treeRect = treeContainer.getBoundingClientRect();
     const y = e.clientY - rect.top;
     const height = rect.height;
 
-    // Показываем индикатор вставки в зависимости от позиции
-    if (y < height * 0.3) {
-        targetNode.classList.add('drag-over-top');
-        targetNode.classList.remove('drag-over-bottom');
-    } else if (y > height * 0.7) {
-        targetNode.classList.add('drag-over-bottom');
-        targetNode.classList.remove('drag-over-top');
+    // Создаем индикатор
+    let indicator = document.createElement('div');
+    indicator.className = 'drop-indicator';
+
+    // Базовые стили для индикатора
+    indicator.style.left = `${rect.left - treeRect.left}px`;
+    indicator.style.width = `${rect.width}px`;
+
+    // Определяем позицию и текст индикатора
+    let indicatorPosition;
+    if (y < height * 0.25) {
+        // Вставка перед
+        indicatorPosition = {
+            top: rect.top - treeRect.top - 2,
+            text: 'Вставить перед'
+        };
+    } else if (y > height * 0.75) {
+        // Вставка после
+        indicatorPosition = {
+            top: rect.bottom - treeRect.top,
+            text: 'Вставить после'
+        };
     } else {
-        targetNode.classList.remove('drag-over-top', 'drag-over-bottom');
+        // Вставка внутрь
+        indicatorPosition = {
+            top: rect.top - treeRect.top + height / 2,
+            text: 'Вставить внутрь'
+        };
     }
+
+    // Применяем позицию
+    indicator.style.top = `${indicatorPosition.top}px`;
+    indicator.textContent = indicatorPosition.text;
+
+    // Проверяем границы контейнера
+    const containerRect = treeContainer.getBoundingClientRect();
+    const indicatorRect = {
+        top: indicatorPosition.top,
+        bottom: indicatorPosition.top + 4 // высота индикатора
+    };
+
+    // Корректируем позицию, если выходит за границы
+    if (indicatorRect.bottom > containerRect.height) {
+        indicator.style.top = `${containerRect.height - 4}px`;
+    }
+    if (indicatorRect.top < 0) {
+        indicator.style.top = '0px';
+    }
+
+    // Добавляем дополнительные атрибуты для стилизации
+    indicator.setAttribute('data-position', indicatorPosition.text.toLowerCase());
+
+    // Добавляем индикатор в контейнер дерева
+    treeContainer.appendChild(indicator);
+
+    // Добавляем класс для подсветки целевого узла
+    targetNode.classList.add('drag-target');
+
+    // Удаляем класс drag-target у всех остальных узлов
+    document.querySelectorAll('.tree-node.drag-target').forEach(node => {
+        if (node !== targetNode) {
+            node.classList.remove('drag-target');
+        }
+    });
 }
 
 function handleDragLeave(e) {
     const targetNode = e.target.closest('.tree-node');
-    if (!targetNode) return;
-    
-    targetNode.classList.remove('drag-over', 'drag-over-top', 'drag-over-bottom');
+    if (targetNode) {
+        targetNode.classList.remove('drag-target');
+    }
+    const indicator = document.querySelector('.drop-indicator');
+    if (indicator) {
+        indicator.remove();
+    }
 }
 
 function handleDrop(e) {
@@ -1228,28 +1294,26 @@ function handleDrop(e) {
     const targetNode = e.target.closest('.tree-node');
     if (!targetNode) return;
 
-    targetNode.classList.remove('drag-over', 'drag-over-top', 'drag-over-bottom');
-    
     const draggedNodeId = e.dataTransfer.getData('text/plain');
     const targetNodeId = targetNode.getAttribute('data-node-id');
-    
+
     if (draggedNodeId === targetNodeId) return;
 
     const rect = targetNode.getBoundingClientRect();
     const y = e.clientY - rect.top;
     const height = rect.height;
 
-    // Определяем тип операции в зависимости от позиции
-    if (y < height * 0.3) {
-        // Вставить перед целевым узлом
+    if (y < height * 0.25) {
         moveNodeBefore(draggedNodeId, targetNodeId);
-    } else if (y > height * 0.7) {
-        // Вставить после целевого узла
+    } else if (y > height * 0.75) {
         moveNodeAfter(draggedNodeId, targetNodeId);
     } else {
-        // Вставить внутрь целевого узла
         moveNodeInside(draggedNodeId, targetNodeId);
     }
+
+    // Удаляем индикатор
+    const indicator = document.querySelector('.drop-indicator');
+    if (indicator) indicator.remove();
 
     renderTree();
 }
@@ -1310,6 +1374,7 @@ function moveNodeInside(draggedId, targetId) {
     if (!draggedNode || !targetNode) return;
 
     removeNodeFromParent(documentStructure, draggedId);
+    if (!targetNode.children) targetNode.children = [];
     targetNode.children.push(draggedNode);
 }
 
