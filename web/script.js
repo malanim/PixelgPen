@@ -36,6 +36,15 @@ document.addEventListener('DOMContentLoaded', function() {
             closeMenu();
         }
     });
+
+    // Инициализация редактора узлов
+    const editor = document.querySelector('.node-editor');
+    if (!editor) {
+        console.warn('Node editor not found in DOM');
+    }
+
+    // Инициализация начального состояния
+    updateNodeEditor();
 });
 
 async function openMenu() {
@@ -793,10 +802,17 @@ function renderNode(node, container, level = 0) {
     }
 
     // Создаем элемент узла
-    const nodeElement = document.createElement('div');
+    let nodeElement = document.createElement('div');
     nodeElement.className = `tree-node ${node.type}`;
     nodeElement.setAttribute('data-node-id', node.id);
     nodeElement.setAttribute('data-level', level);
+    
+    nodeElement.setAttribute('draggable', 'true');
+    nodeElement.setAttribute('data-node-id', node.id);
+    nodeElement.addEventListener('dragstart', handleDragStart);
+    nodeElement.addEventListener('dragover', handleDragOver);
+    nodeElement.addEventListener('dragleave', handleDragLeave);
+    nodeElement.addEventListener('drop', handleDrop);
 
     // Создаем контейнер для содержимого узла
     const nodeContent = document.createElement('div');
@@ -905,7 +921,11 @@ function renderNode(node, container, level = 0) {
     // Добавляем обработчик клика для выбора узла
     nodeElement.onclick = (e) => {
         e.stopPropagation();
-        selectNode(node);
+        try {
+            selectNode(node);
+        } catch (error) {
+            console.error('Error selecting node:', error);
+        }
     };
 
     // Добавляем контейнер для дочерних элементов
@@ -925,6 +945,8 @@ function renderNode(node, container, level = 0) {
 }
 
 function selectNode(node) {
+    if (!node) return;
+
     const previousSelected = document.querySelector('.tree-node.selected');
     if (previousSelected) {
         previousSelected.classList.remove('selected');
@@ -936,7 +958,12 @@ function selectNode(node) {
     }
 
     selectedNode = node;
-    updateNodeEditor();
+    
+    try {
+        updateNodeEditor();
+    } catch (error) {
+        console.error('Error updating node editor:', error);
+    }
 }
 
 function updateNodeEditor() {
@@ -944,19 +971,36 @@ function updateNodeEditor() {
     const typeSelect = document.getElementById('nodeType');
     const valueInput = document.getElementById('nodeValue');
 
+    // Проверяем существование элементов перед использованием
+    if (!titleInput || !typeSelect) {
+        console.error('Required editor elements not found');
+        return;
+    }
+
     if (selectedNode) {
-        titleInput.value = selectedNode.title;
-        typeSelect.value = selectedNode.type;
-        valueInput.value = selectedNode.value || '';
+        titleInput.value = selectedNode.title || '';
+        typeSelect.value = selectedNode.type || 'section';
+        
+        // Проверяем существование valueInput перед использованием
+        if (valueInput) {
+            valueInput.value = selectedNode.value || '';
+            valueInput.style.display = (selectedNode.type === 'text' || selectedNode.type === 'select') ? 'block' : 'none';
+        }
+
         titleInput.disabled = false;
         typeSelect.disabled = false;
-        valueInput.disabled = false;
-        valueInput.style.display = (selectedNode.type === 'text' || selectedNode.type === 'select') ? 'block' : 'none';
+        if (valueInput) {
+            valueInput.disabled = false;
+        }
     } else {
         titleInput.value = '';
         typeSelect.value = 'section';
         titleInput.disabled = true;
         typeSelect.disabled = true;
+        if (valueInput) {
+            valueInput.value = '';
+            valueInput.disabled = true;
+        }
     }
 }
 
@@ -1116,6 +1160,175 @@ function updateNodeTitle() {
 //         renderTree();
 //     }
 // }
+
+function handleDragStart(e) {
+    const nodeElement = e.target.closest('.tree-node');
+    if (!nodeElement) return;
+
+    // Создаем копию элемента для отображения при перетаскивании
+    const dragGhost = nodeElement.cloneNode(true);
+    dragGhost.classList.add('drag-ghost');
+    dragGhost.style.position = 'absolute';
+    dragGhost.style.opacity = '0.8';
+    dragGhost.style.pointerEvents = 'none';
+    
+    // Скрываем ghost элемент изначально
+    dragGhost.style.top = '-1000px';
+    document.body.appendChild(dragGhost);
+
+    // Устанавливаем ghost элемент как изображение при перетаскивании
+    e.dataTransfer.setDragImage(dragGhost, 0, 0);
+    e.dataTransfer.setData('text/plain', nodeElement.getAttribute('data-node-id'));
+
+    // Добавляем класс dragging к оригинальному элементу
+    nodeElement.classList.add('dragging');
+
+    // Удаляем ghost элемент после начала перетаскивания
+    requestAnimationFrame(() => {
+        document.body.removeChild(dragGhost);
+    });
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    const targetNode = e.target.closest('.tree-node');
+    if (!targetNode) return;
+
+    const draggingNode = document.querySelector('.dragging');
+    if (draggingNode === targetNode) return;
+
+    targetNode.classList.add('drag-over');
+
+    // Определяем позицию курсора относительно целевого элемента
+    const rect = targetNode.getBoundingClientRect();
+    const y = e.clientY - rect.top;
+    const height = rect.height;
+
+    // Показываем индикатор вставки в зависимости от позиции
+    if (y < height * 0.3) {
+        targetNode.classList.add('drag-over-top');
+        targetNode.classList.remove('drag-over-bottom');
+    } else if (y > height * 0.7) {
+        targetNode.classList.add('drag-over-bottom');
+        targetNode.classList.remove('drag-over-top');
+    } else {
+        targetNode.classList.remove('drag-over-top', 'drag-over-bottom');
+    }
+}
+
+function handleDragLeave(e) {
+    const targetNode = e.target.closest('.tree-node');
+    if (!targetNode) return;
+    
+    targetNode.classList.remove('drag-over', 'drag-over-top', 'drag-over-bottom');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    const targetNode = e.target.closest('.tree-node');
+    if (!targetNode) return;
+
+    targetNode.classList.remove('drag-over', 'drag-over-top', 'drag-over-bottom');
+    
+    const draggedNodeId = e.dataTransfer.getData('text/plain');
+    const targetNodeId = targetNode.getAttribute('data-node-id');
+    
+    if (draggedNodeId === targetNodeId) return;
+
+    const rect = targetNode.getBoundingClientRect();
+    const y = e.clientY - rect.top;
+    const height = rect.height;
+
+    // Определяем тип операции в зависимости от позиции
+    if (y < height * 0.3) {
+        // Вставить перед целевым узлом
+        moveNodeBefore(draggedNodeId, targetNodeId);
+    } else if (y > height * 0.7) {
+        // Вставить после целевого узла
+        moveNodeAfter(draggedNodeId, targetNodeId);
+    } else {
+        // Вставить внутрь целевого узла
+        moveNodeInside(draggedNodeId, targetNodeId);
+    }
+
+    renderTree();
+}
+
+function moveNode(draggedNodeId, dropTargetId) {
+    const draggedNode = findNodeById(documentStructure, draggedNodeId);
+    const dropTarget = findNodeById(documentStructure, dropTargetId);
+
+    if (draggedNode && dropTarget) {
+        // Удаляем узел из его текущего положения
+        removeNodeFromParent(documentStructure, draggedNodeId);
+
+        // Добавляем узел к новому родителю
+        dropTarget.children.push(draggedNode);
+
+        // Перерисовываем дерево
+        renderTree();
+    }
+}
+
+function findNodeById(node, id) {
+    if (node.id === id) return node;
+    for (let child of node.children) {
+        const found = findNodeById(child, id);
+        if (found) return found;
+    }
+    return null;
+}
+
+function moveNodeBefore(draggedId, targetId) {
+    const draggedNode = findNodeById(documentStructure, draggedId);
+    const targetNode = findNodeById(documentStructure, targetId);
+    const targetParent = findParentNode(documentStructure, targetId);
+
+    if (!draggedNode || !targetNode || !targetParent) return;
+
+    removeNodeFromParent(documentStructure, draggedId);
+    const targetIndex = targetParent.children.indexOf(targetNode);
+    targetParent.children.splice(targetIndex, 0, draggedNode);
+}
+
+function moveNodeAfter(draggedId, targetId) {
+    const draggedNode = findNodeById(documentStructure, draggedId);
+    const targetNode = findNodeById(documentStructure, targetId);
+    const targetParent = findParentNode(documentStructure, targetId);
+
+    if (!draggedNode || !targetNode || !targetParent) return;
+
+    removeNodeFromParent(documentStructure, draggedId);
+    const targetIndex = targetParent.children.indexOf(targetNode);
+    targetParent.children.splice(targetIndex + 1, 0, draggedNode);
+}
+
+function moveNodeInside(draggedId, targetId) {
+    const draggedNode = findNodeById(documentStructure, draggedId);
+    const targetNode = findNodeById(documentStructure, targetId);
+
+    if (!draggedNode || !targetNode) return;
+
+    removeNodeFromParent(documentStructure, draggedId);
+    targetNode.children.push(draggedNode);
+}
+
+function removeNodeFromParent(node, idToRemove) {
+    node.children = node.children.filter(child => {
+        if (child.id === idToRemove) return false;
+        removeNodeFromParent(child, idToRemove);
+        return true;
+    });
+}
+
+function canMoveNode(draggedNodeId, dropTargetId) {
+    const dropTarget = findNodeById(documentStructure, dropTargetId);
+    while (dropTarget) {
+        if (dropTarget.id === draggedNodeId) return false;
+        dropTarget = findNodeById(documentStructure, dropTarget.parentId);
+    }
+    return true;
+}
 
 function saveStructure() {
     const documentType = document.getElementById('documentType').value;

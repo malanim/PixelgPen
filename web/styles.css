@@ -730,6 +730,19 @@ hr {
     cursor: pointer;
 }
 
+.structure-editor-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: none;
+    z-index: 1010;
+}
+
 .structure-editor {
     display: none;
     position: fixed;
@@ -739,13 +752,15 @@ hr {
     background-color: var(--primary-bg);
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); */
     z-index: 1000;
     width: 90%;
     max-width: 1200px;
     height: 80vh;
+    z-index: 1011;
 }
 
+.structure-editor-overlay.active,
 .structure-editor.active {
     display: block;
 }
@@ -754,6 +769,7 @@ hr {
     display: flex;
     height: calc(100% - 40px); /* Вычитаем высоту заголовка */
     gap: 20px;
+    overflow: hidden; /* Добавляем это свойство */
 }
 
 .editor-left-panel {
@@ -763,19 +779,13 @@ hr {
     gap: 20px;
     padding-right: 20px;
     border-right: 1px solid var(--input-border);
+    max-height: 96%; /* Добавляем это свойство */
 }
 
 .editor-right-panel {
     flex-grow: 1;
     overflow: hidden;
-}
-
-.document-tree {
-    height: 100%;
-    overflow-y: auto;
-    border: 1px solid var(--input-border);
-    border-radius: 4px;
-    padding: 10px;
+    max-height: 96%; /* Добавляем это свойство */
 }
 
 .node-editor {
@@ -835,6 +845,7 @@ hr {
     border-radius: 4px;
     padding: 10px;
     font-family: Arial, sans-serif;
+    max-height: calc(100vh - 200px); /* Ограничиваем максимальную высоту */
 }
 
 /* Базовые стили для узлов дерева */
@@ -842,6 +853,7 @@ hr {
     position: relative;
     margin: 5px 0;
     transition: all 0.2s ease;
+    cursor: move;
 }
 
 /* Контейнер для дочерних элементов */
@@ -913,11 +925,6 @@ hr {
 
 .expand-icon.collapsed::before {
     content: "+";
-}
-
-/* Стили для перетаскивания */
-.tree-node.dragging {
-    opacity: 0.5;
 }
 
 .tree-node.drag-over {
@@ -1110,15 +1117,6 @@ hr {
     left: 0;
 }
 
-/* Стили для перетаскивания */
-.tree-node.dragging {
-    opacity: 0.5;
-}
-
-.tree-node.drag-over > .tree-node-content {
-    border-top: 2px solid var(--accent-color);
-}
-
 /* Стили для мобильных устройств */
 @media (max-width: 768px) {
     .tree-node-content {
@@ -1178,7 +1176,7 @@ hr {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 1012;
 }
 
 .dialog-content {
@@ -1204,4 +1202,82 @@ hr {
 
 .dialog-content button:hover {
     background: var(--button-hover);
+}
+
+/* .tree-node.dragging {
+    opacity: 0.5;
+}
+
+.tree-node.drag-over > .tree-node-content {
+    border: 2px dashed var(--accent-color);
+} */
+
+.drag-ghost {
+    background: var(--secondary-bg);
+    border: 2px solid var(--accent-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.tree-node.dragging {
+    opacity: 0.4;
+    border: 2px dashed var(--accent-color);
+}
+
+.tree-node.drag-over {
+    position: relative;
+}
+
+.tree-node.drag-over::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--accent-color);
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.tree-node.drag-over::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent-color);
+}
+
+.tree-node.drag-over-top::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent-color);
+    z-index: 1;
+}
+
+.tree-node.drag-over-bottom::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent-color);
+    z-index: 1;
+}
+
+.insert-indicator {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--accent-color);
+    transition: all 0.2s ease;
 }
