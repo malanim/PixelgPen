@@ -546,12 +546,12 @@ class HistoryManager {
         try {
             // Создаем глубокую копию состояния
             const stateCopy = this.deepClone(state);
-            
+
             // Удаляем все состояния после текущего индекса
             this.history = this.history.slice(0, this.currentIndex + 1);
             this.history.push(stateCopy);
             this.currentIndex++;
-            
+
             // Обновляем состояние кнопок
             updateUndoRedoButtons();
         } catch (error) {
@@ -891,11 +891,20 @@ function initializeTree() {
 function renderTree() {
     const treeContainer = document.getElementById('documentTree');
     treeContainer.innerHTML = '';
-    renderNode(documentStructure, treeContainer);
+    if (documentStructure) {
+        renderNode(documentStructure, treeContainer);
+    } else {
+        treeContainer.innerHTML = '<p>Структура документа пуста</p>';
+    }
     updateUndoRedoButtons();
 }
 
 function renderNode(node, container, level = 0) {
+    if (!node) {
+        console.error('Attempting to render null node');
+        return;
+    }
+
     // Пропускаем рендеринг корневого узла
     if (node.type === 'root') {
         node.children.forEach(child => renderNode(child, container, level));
@@ -1251,6 +1260,7 @@ function findParentNode(root, nodeId) {
 function updateNodeTitle() {
     if (selectedNode) {
         selectedNode.title = document.getElementById('nodeTitle').value;
+        historyManager.push(documentStructure);
         renderTree();
         selectNode(selectedNode);
     }
