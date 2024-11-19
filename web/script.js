@@ -1082,31 +1082,38 @@ function updateNodeEditor() {
     const valueInput = document.getElementById('nodeValue');
 
     // Проверяем существование элементов перед использованием
-    if (!titleInput || !typeSelect) {
+    if (!titleInput) {
         console.error('Required editor elements not found');
         return;
     }
 
     if (selectedNode) {
+        // Устанавливаем значение и включаем поле
         titleInput.value = selectedNode.title || '';
-        typeSelect.value = selectedNode.type || 'section';
-        
-        // Проверяем существование valueInput перед использованием
+        titleInput.disabled = false;
+
+        // Если есть typeSelect, обновляем его
+        if (typeSelect) {
+            typeSelect.value = selectedNode.type || 'section';
+            typeSelect.disabled = false;
+        }
+
+        // Если есть valueInput, обновляем его
         if (valueInput) {
             valueInput.value = selectedNode.value || '';
             valueInput.style.display = (selectedNode.type === 'text' || selectedNode.type === 'select') ? 'block' : 'none';
-        }
-
-        titleInput.disabled = false;
-        typeSelect.disabled = false;
-        if (valueInput) {
             valueInput.disabled = false;
         }
     } else {
+        // Если узел не выбран, очищаем и отключаем поля
         titleInput.value = '';
-        typeSelect.value = 'section';
         titleInput.disabled = true;
-        typeSelect.disabled = true;
+
+        if (typeSelect) {
+            typeSelect.value = 'section';
+            typeSelect.disabled = true;
+        }
+
         if (valueInput) {
             valueInput.value = '';
             valueInput.disabled = true;
