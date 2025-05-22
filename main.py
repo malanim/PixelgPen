@@ -264,7 +264,6 @@ if __name__ == '__main__':
         eel.start('main.html', 
                 mode=browser,
                 size=(window_width, window_height),
-                icon_path=icon_path,
                 block=False)
         
         # Применяем тему при запуске
