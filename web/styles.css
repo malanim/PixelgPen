@@ -550,64 +550,81 @@ hr {
     background-color: #da190b;
 }
 
-/* Стили для верхнего меню - контейнер */
-.top-menu {
+/* Стили для системы вкладок верхнего меню */
+.tab-menu {
     background-color: var(--secondary-bg);
-    padding: 20px;
+    padding: 10px 20px;
     border-radius: 8px;
     margin-bottom: 20px;
     display: flex;
-    gap: 10px;
-    justify-content: flex-start;
     align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    user-select: none;
 }
 
-/* Обновленные стили для кнопки-гамбургера */
-.hamburger-button {
+.tab-list {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-grow: 1;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--button-hover) transparent;
+}
+
+.tab-list::-webkit-scrollbar {
+    height: 6px;
+}
+
+.tab-list::-webkit-scrollbar-thumb {
+    background-color: var(--button-hover);
+    border-radius: 3px;
+}
+
+.tab-button {
     background-color: var(--button-bg);
     color: var(--button-text);
     border: none;
     border-radius: 8px;
-    padding: 10px 20px;
-    cursor: pointer;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s;
-    height: auto;
-    width: auto;
-}
-
-/* Стили для span внутри кнопки-гамбургера */
-.hamburger-button span {
-    background-color: var(--button-bg);
-    color: var(--button-text);
-    border-radius: 8px;
     padding: 8px 16px;
-    font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s;
-    display: inline-flex;
+    font-weight: bold;
+    display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.3s;
+    white-space: nowrap;
+    user-select: none;
 }
 
-/* Эффект при наведении для кнопки-гамбургера и span */
-.hamburger-button:hover,
-.hamburger-button span:hover {
+.tab-button:hover {
     background-color: var(--button-hover);
-    transform: none;
 }
 
-/* Активная кнопка */
-.hamburger-button.active {
+.tab-button.active {
     background-color: var(--accent-color);
     color: var(--button-text);
 }
 
-.hamburger-button.active span.active {
-    background-color: var(--accent-color);
+.tab-button.add-tab {
+    font-size: 20px;
+    padding: 4px 12px;
+    width: 36px;
+    height: 36px;
+    line-height: 1;
+    border-radius: 50%;
+    font-weight: normal;
+}
+
+.tab-button.settings-tab {
+    font-size: 20px;
+    padding: 4px 12px;
+    width: 36px;
+    height: 36px;
+    line-height: 1;
+    border-radius: 50%;
+    font-weight: normal;
 }
 
 /* Контейнер для текста */

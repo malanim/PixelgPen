@@ -21,13 +21,13 @@
     <div id="notifications-container"></div>
 
     <div class="main-container">
-        <!-- Верхнее меню -->
-        <div class="top-menu">
-            <button class="hamburger-button">
-                <span data-block="block1"></span>
-                <span data-block="block2"></span>
-                <span data-block="block3"></span>
-            </button>
+        <!-- Верхнее меню как система вкладок -->
+        <div class="tab-menu">
+            <div class="tab-list">
+                <button id="add-tab-button" class="tab-button add-tab" title="Добавить вкладку">＋</button>
+                <!-- Вкладки будут добавляться динамически сюда -->
+            </div>
+            <button id="settings-button" class="tab-button settings-tab" title="Настройки">⚙</button>
         </div>
 
         <!-- Основной контент -->

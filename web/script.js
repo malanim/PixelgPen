@@ -6,23 +6,134 @@ function closeWindow() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const hamburgerButton = document.querySelector('.hamburger-button');
+    const tabList = document.querySelector('.tab-list');
+    const addTabButton = document.getElementById('add-tab-button');
+    const settingsButton = document.getElementById('settings-button');
     const contentArea = document.querySelector('.content-area');
 
-    // Убираем обработчик клика по кнопке гамбургера, чтобы меню не закрывалось и не открывалось
-    // Вместо этого сразу делаем меню открытым
-    hamburgerButton.classList.add('active');
-    contentArea.classList.add('expanded');
+    // Состояние вкладок
+    let tabs = [];
+    let activeTabId = null;
 
-    // Добавляем обработчики клика для переключения блоков контента
-    const menuSpans = hamburgerButton.querySelectorAll('span[data-block]');
-    menuSpans.forEach(span => {
-        span.addEventListener('click', () => {
-            const blockId = span.getAttribute('data-block');
-            if (blockId) {
-                showBlock(blockId);
+    // Функция для отображения блока по id
+    function showBlock(blockId) {
+        document.querySelectorAll('.content-block').forEach(block => {
+            block.classList.remove('active');
+        });
+        const block = document.getElementById(blockId);
+        if (block) {
+            block.classList.add('active');
+        }
+    }
+
+    // Функция для создания вкладки
+    function createTab(id, title) {
+        const tabButton = document.createElement('button');
+        tabButton.className = 'tab-button';
+        tabButton.textContent = title;
+        tabButton.dataset.tabId = id;
+
+        // Кнопка закрытия вкладки
+        const closeBtn = document.createElement('span');
+        closeBtn.textContent = '×';
+        closeBtn.className = 'close-tab';
+        closeBtn.style.marginLeft = '8px';
+        closeBtn.style.cursor = 'pointer';
+        closeBtn.title = 'Закрыть вкладку';
+        tabButton.appendChild(closeBtn);
+
+        // Обработчик клика по вкладке
+        tabButton.addEventListener('click', (e) => {
+            if (e.target === closeBtn) {
+                closeTab(id);
+                e.stopPropagation();
+            } else {
+                activateTab(id);
             }
         });
+
+        return tabButton;
+    }
+
+    // Функция для активации вкладки
+    function activateTab(id) {
+        if (activeTabId === id) return;
+        activeTabId = id;
+
+        // Обновляем активность вкладок
+        tabs.forEach(tab => {
+            if (tab.id === id) {
+                tab.button.classList.add('active');
+            } else {
+                tab.button.classList.remove('active');
+            }
+        });
+
+        // Показываем соответствующий блок
+        showBlock(id);
+    }
+
+    // Функция для закрытия вкладки
+    function closeTab(id) {
+        const tabIndex = tabs.findIndex(tab => tab.id === id);
+        if (tabIndex === -1) return;
+
+        // Удаляем вкладку из DOM и массива
+        const tab = tabs[tabIndex];
+        tabList.removeChild(tab.button);
+        tabs.splice(tabIndex, 1);
+
+        // Если закрытая вкладка была активной, активируем соседнюю
+        if (activeTabId === id) {
+            if (tabs.length > 0) {
+                const newActiveIndex = tabIndex > 0 ? tabIndex - 1 : 0;
+                activateTab(tabs[newActiveIndex].id);
+            } else {
+                activeTabId = null;
+                // Скрываем все блоки, если вкладок нет
+                document.querySelectorAll('.content-block').forEach(block => {
+                    block.classList.remove('active');
+                });
+            }
+        }
+    }
+
+    // Функция для добавления новой вкладки с первой страницей меню (block1)
+    function addNewTab() {
+        const id = 'block1';
+        // Проверяем, есть ли уже такая вкладка
+        if (tabs.some(tab => tab.id === id)) {
+            activateTab(id);
+            return;
+        }
+        const tabButton = createTab(id, 'Text Generator');
+        tabList.insertBefore(tabButton, addTabButton);
+        tabs.push({ id, button: tabButton });
+        activateTab(id);
+    }
+
+    // Обработчик клика по кнопке добавления вкладки
+    addTabButton.addEventListener('click', () => {
+        addNewTab();
+    });
+
+    // Обработчик клика по кнопке настроек
+    settingsButton.addEventListener('click', () => {
+        // Проверяем, есть ли вкладка настроек
+        const id = 'block3';
+        if (tabs.some(tab => tab.id === id)) {
+            activateTab(id);
+            return;
+        }
+        const tabButton = createTab(id, 'Settings');
+        tabList.insertBefore(tabButton, addTabButton);
+        tabs.push({ id, button: tabButton });
+        activateTab(id);
+    });
+
+    // Инициализация: при загрузке вкладок нет, контент скрыт
+    document.querySelectorAll('.content-block').forEach(block => {
+        block.classList.remove('active');
     });
 
     // Инициализация редактора узлов
