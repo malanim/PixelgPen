@@ -550,73 +550,62 @@ hr {
     background-color: #da190b;
 }
 
-/* Базовые стили для кнопки-гамбургера */
-.hamburger-button {
+/* Стили для верхнего меню - контейнер */
+.top-menu {
+    background-color: var(--secondary-bg);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+    gap: 10px;
+    justify-content: flex-start;
     align-items: center;
-    width: auto;
-    height: 40px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0 10px;
-    position: relative;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    transition: none;
 }
 
-/* Базовые стили для полосок гамбургера */
-.hamburger-button span {
-    display: inline-block;
-    width: auto;
+/* Обновленные стили для кнопки-гамбургера */
+.hamburger-button {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
     height: auto;
-    background-color: transparent;
-    transition: none;
-    position: relative;
-    border-radius: 0;
-    padding: 0 10px;
-    color: var(--primary-text);
+    width: auto;
+}
+
+/* Стили для span внутри кнопки-гамбургера */
+.hamburger-button span {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    border-radius: 8px;
+    padding: 8px 16px;
     font-weight: bold;
     cursor: pointer;
-}
-
-/* Стили для активного состояния кнопки */
-.hamburger-button.active {
-    width: 100%;
-    height: 40px;
-    background-color: var(--secondary-bg);
-    padding: 0;
-    border-radius: 0;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
-
-/* Стили для span в активном состоянии */
-.hamburger-button.active span {
-    width: auto;
-    height: auto;
-    margin: 0;
-    background-color: transparent;
-    border-radius: 0;
+    transition: background-color 0.3s;
     display: inline-flex;
     align-items: center;
-    padding-left: 0;
-    color: var(--button-text);
-    cursor: pointer;
+    justify-content: center;
 }
 
-/* Эффект при наведении */
-.hamburger-button.active span:hover {
+/* Эффект при наведении для кнопки-гамбургера и span */
+.hamburger-button:hover,
+.hamburger-button span:hover {
     background-color: var(--button-hover);
     transform: none;
 }
 
 /* Активная кнопка */
+.hamburger-button.active {
+    background-color: var(--accent-color);
+    color: var(--button-text);
+}
+
 .hamburger-button.active span.active {
     background-color: var(--accent-color);
 }
