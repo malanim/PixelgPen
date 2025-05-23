@@ -104,7 +104,8 @@ body {
     top: 0;
     height: 100%;
     width: 200px;
-    transition: transform 0.3s ease;
+    /* Убираем анимацию */
+    transition: none;
     z-index: 998; /* Уменьшаем z-index, чтобы был меньше чем у кнопки */
 }
 
@@ -112,7 +113,8 @@ body {
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
-    transition: margin-left 0.5s ease-in-out; /* Добавляем плавный переход */
+    /* Убираем анимацию */
+    transition: none;
 }
 
 /* Для сдвинутого состояния */
@@ -559,7 +561,8 @@ hr {
     top: 20px;
     left: 20px;
     z-index: 1000;
-    transition: all 0.2s ease;
+    /* Убираем анимацию */
+    transition: none;
 }
 
 /* Базовые стили для полосок гамбургера */
@@ -568,7 +571,8 @@ hr {
     width: 100%;
     height: 3px;
     background-color: var(--primary-text);
-    transition: all 0.2s ease;
+    /* Убираем анимацию */
+    transition: none;
     position: relative;
     border-radius: 2px;
 }

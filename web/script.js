@@ -8,33 +8,21 @@ function closeWindow() {
 document.addEventListener('DOMContentLoaded', function() {
     const hamburgerButton = document.querySelector('.hamburger-button');
     const contentArea = document.querySelector('.content-area');
-    
-    hamburgerButton.addEventListener('click', function(event) {
-        event.stopPropagation();
-        
-        // Если меню открыто
-        if (this.classList.contains('active')) {
-            // Проверяем, был ли клик по span элементу или его содержимому
-            const targetSpan = event.target.closest('span[data-block]');
-            if (targetSpan) {
-                const blockId = targetSpan.getAttribute('data-block');
-                if (blockId) {
-                    showBlock(blockId);
-                    closeMenu();
-                }
-            }
-        } else {
-            // Если меню закрыто, открываем его
-            openMenu();
-        }
-    });
 
-    // Закрытие меню при клике вне его
-    document.addEventListener('click', function(event) {
-        if (hamburgerButton.classList.contains('active') &&
-            !hamburgerButton.contains(event.target)) {
-            closeMenu();
-        }
+    // Убираем обработчик клика по кнопке гамбургера, чтобы меню не закрывалось и не открывалось
+    // Вместо этого сразу делаем меню открытым
+    hamburgerButton.classList.add('active');
+    contentArea.classList.add('expanded');
+
+    // Добавляем обработчики клика для переключения блоков контента
+    const menuSpans = hamburgerButton.querySelectorAll('span[data-block]');
+    menuSpans.forEach(span => {
+        span.addEventListener('click', () => {
+            const blockId = span.getAttribute('data-block');
+            if (blockId) {
+                showBlock(blockId);
+            }
+        });
     });
 
     // Инициализация редактора узлов
@@ -69,20 +57,8 @@ async function openMenu() {
 }
 
 function closeMenu() {
-    const hamburgerButton = document.querySelector('.hamburger-button');
-    const contentArea = document.querySelector('.content-area');
-    
-    hamburgerButton.classList.add('closing');
-    contentArea.classList.remove('expanded');
-    
-    // Очищаем текст кнопок
-    hamburgerButton.querySelectorAll('span').forEach(span => {
-        span.textContent = '';
-    });
-
-    setTimeout(() => {
-        hamburgerButton.classList.remove('active', 'closing');
-    }, 50);
+    // Убираем функцию closeMenu, чтобы меню не закрывалось
+    // Оставляем пустую функцию
 }
 
 function createTypingText(text) {
