@@ -93,33 +93,37 @@ body {
 
 .main-container {
     display: flex;
+    flex-direction: column;
     height: 100vh;
-    position: relative; /* Добавляем относительное позиционирование */
-    padding-left: 60px; /* Добавляем отступ слева для кнопки-гамбургера */
+    position: relative;
+    padding-left: 0;
 }
 
 .menu-sidebar {
-    position: fixed;
-    left: 60px; /* Смещаем меню вправо от кнопки-гамбургера */
+    position: relative;
+    left: 0;
     top: 0;
-    height: 100%;
-    width: 200px;
-    /* Убираем анимацию */
+    height: auto;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    background-color: var(--secondary-bg);
+    z-index: 998;
     transition: none;
-    z-index: 998; /* Уменьшаем z-index, чтобы был меньше чем у кнопки */
 }
 
 .content-area {
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
-    /* Убираем анимацию */
     transition: none;
+    margin-left: 0;
+    margin-top: 10px;
 }
 
 /* Для сдвинутого состояния */
 .content-area.expanded {
-    margin-left: 200px; /* Ширина выдвинутого меню */
+    margin-left: 0;
 }
 
 .menu-button {
@@ -549,53 +553,59 @@ hr {
 /* Базовые стили для кнопки-гамбургера */
 .hamburger-button {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 30px;
-    height: 25px;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: auto;
+    height: 40px;
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0;
-    position: fixed;
-    top: 20px;
-    left: 20px;
+    padding: 0 10px;
+    position: relative;
+    top: 0;
+    left: 0;
     z-index: 1000;
-    /* Убираем анимацию */
     transition: none;
 }
 
 /* Базовые стили для полосок гамбургера */
 .hamburger-button span {
-    display: block;
-    width: 100%;
-    height: 3px;
-    background-color: var(--primary-text);
-    /* Убираем анимацию */
+    display: inline-block;
+    width: auto;
+    height: auto;
+    background-color: transparent;
     transition: none;
     position: relative;
-    border-radius: 2px;
+    border-radius: 0;
+    padding: 0 10px;
+    color: var(--primary-text);
+    font-weight: bold;
+    cursor: pointer;
 }
 
 /* Стили для активного состояния кнопки */
 .hamburger-button.active {
-    width: 200px;
-    height: auto;
+    width: 100%;
+    height: 40px;
     background-color: var(--secondary-bg);
-    padding: 10px;
-    border-radius: 4px;
+    padding: 0;
+    border-radius: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 
 /* Стили для span в активном состоянии */
 .hamburger-button.active span {
-    width: 100%;
-    height: 40px;
-    margin: 5px 0;
-    background-color: var(--button-bg);
-    border-radius: 4px;
-    display: flex;
+    width: auto;
+    height: auto;
+    margin: 0;
+    background-color: transparent;
+    border-radius: 0;
+    display: inline-flex;
     align-items: center;
-    padding-left: 15px; /* Отступ для текста */
+    padding-left: 0;
     color: var(--button-text);
     cursor: pointer;
 }
@@ -603,7 +613,7 @@ hr {
 /* Эффект при наведении */
 .hamburger-button.active span:hover {
     background-color: var(--button-hover);
-    transform: scale(1.02);
+    transform: none;
 }
 
 /* Активная кнопка */
